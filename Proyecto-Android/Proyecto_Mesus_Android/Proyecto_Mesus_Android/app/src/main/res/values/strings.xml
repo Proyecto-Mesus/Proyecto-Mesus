@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Proyecto Mesus Android</string>
+    <string name="User">Usuario</string>
+    <string name="Email">Correo</string>
+    <string name="Passwd">Contraseña</string>
+    <string name="buttonLogin">Iniciar Sesión</string>
+    <string name="buttonLogginGoogle">Iniciar Sesión en Google</string>
+    <string name="errorLogin">Funcionalidad no implementada aún</string>
+    <string name="createAccount">¿No tienes cuenta aún? Crea una</string>
+    <string name="confirmPsswd">Confirmar contraseña</string>
+    <string name="fechaNac">Fecha de nacimiento</string>
+    <string name="crearCuenta">Crear cuenta</string>
+    <string name="cerrarSnackbar">CERRAR</string>
+    <string name="loginCorrecto">Login correcto</string>
+    <string name="loginIncorrecto">Login incorrecto</string>
+    <string name="contraseñasIncorrectas">Las contraseñas no coinciden</string>
+</resources>

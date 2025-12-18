@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/nav_graph"
+            app:startDestination="@id/loginFragment">
+    <fragment
+            android:id="@id/loginFragment"
+            android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.LoginFragment"
+            android:label="Login"
+            app:layout="@layout/login_fragment">
+        <action
+                android:id="@+id/createAccountAction"
+                app:destination="@id/registerFragment"/>
+    </fragment>
+
+    <fragment
+            android:id="@id/registerFragment"
+            android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.RegisterFragment"
+            android:label="Register"
+            app:layout="@layout/register_fragment">
+    </fragment>
+
+</navigation>
