@@ -57,8 +57,9 @@ class LoginFragment: Fragment() {
 
         viewModel.loginResult.observe(viewLifecycleOwner, Observer<Boolean> { success ->
             if (success) {
-                val snackbar = Snackbar.make(view, getString(R.string.loginCorrecto), Snackbar.LENGTH_LONG)
-                snackbar.show()
+//                val snackbar = Snackbar.make(view, getString(R.string.loginCorrecto), Snackbar.LENGTH_LONG)
+//                snackbar.show()
+                findNavController().navigate(R.id.collectionFragment)
             } else {
                 val snackbar = Snackbar.make(view, getString(R.string.loginIncorrecto), Snackbar.LENGTH_LONG)
                 snackbar.show()

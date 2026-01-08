@@ -2,7 +2,6 @@ package es.cifpcarlos3.proyecto_mesus_android.data.db
 
 import java.sql.Connection
 import java.sql.DriverManager
-import android.util.Log
 
 class DatabaseHelper {
 

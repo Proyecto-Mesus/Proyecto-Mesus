@@ -14,10 +14,52 @@
     </fragment>
 
     <fragment
-            android:id="@id/registerFragment"
+            android:id="@+id/registerFragment"
             android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.RegisterFragment"
             android:label="Register"
             app:layout="@layout/register_fragment">
     </fragment>
+
+    <fragment
+        android:id="@+id/collectionFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.CollectionFragment"
+        android:label="Colección"
+        app:layout="@layout/collection_fragment" />
+
+    <fragment
+        android:id="@+id/eventsFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.EventsFragment"
+        android:label="Eventos"
+        app:layout="@layout/events_fragment" />
+
+    <fragment
+        android:id="@+id/marketplaceFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.MarketplaceFragment"
+        android:label="Mercado"
+        app:layout="@layout/marketplace_fragment" />
+
+    <fragment
+        android:id="@+id/chatListFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.ChatFragment"
+        android:label="Chats"
+        app:layout="@layout/chat_fragment" />
+
+    <fragment
+        android:id="@+id/addCardFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.AddCardFragment"
+        android:label="Añadir Carta"
+        app:layout="@layout/add_card_fragment" />
+
+    <fragment
+        android:id="@+id/addEventFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.AddEventFragment"
+        android:label="Crear Evento"
+        app:layout="@layout/add_event_fragment" />
+
+    <fragment
+        android:id="@+id/addMarketplaceItemFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.AddMarketplaceItemFragment"
+        android:label="Vender Carta"
+        app:layout="@layout/add_marketplace_item_fragment" />
 
 </navigation>
