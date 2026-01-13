@@ -84,21 +84,21 @@ class NewUserViewModel: ViewModel() {
                     val conn = dbHelper.getConnection()
                     
                     conn.use { connection ->
-                        val consulta1 = "SELECT nombre, email FROM usuarios WHERE nombre = ? OR email = ?"
+                        val consulta1 = "SELECT nombre_usuario, email FROM usuarios WHERE nombre_usuario = ? OR email = ?"
                         val stmt1 = connection.prepareStatement(consulta1)
                         stmt1.setString(1, user)
                         stmt1.setString(2, email)
                         val rs = stmt1.executeQuery()
 
                         if (rs.next()) {
-                            val existingName = rs.getString("nombre")
+                            val existingName = rs.getString("nombre_usuario")
                             if (existingName.equals(user)) {
                                 errorMessage = "El nombre de usuario ya existe"
                             } else {
                                 errorMessage = "El correo electrónico ya está registrado"
                             }
                         } else {
-                            val consulta2 = "INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)"
+                            val consulta2 = "INSERT INTO usuarios (nombre_usuario, email, password) VALUES (?, ?, ?)"
                             val stmt2 = connection.prepareStatement(consulta2)
                             stmt2.setString(1, user)
                             stmt2.setString(2, email)

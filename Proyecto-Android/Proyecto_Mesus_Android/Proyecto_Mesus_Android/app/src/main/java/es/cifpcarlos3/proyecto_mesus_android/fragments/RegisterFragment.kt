@@ -15,14 +15,15 @@ import es.cifpcarlos3.proyecto_mesus_android.databinding.RegisterFragmentBinding
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.NewUserViewModel
 
 class RegisterFragment: Fragment() {
-    private lateinit var binding: RegisterFragmentBinding
+    private var _binding: RegisterFragmentBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = RegisterFragmentBinding.inflate(inflater, container, false)
+        _binding = RegisterFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -72,5 +73,10 @@ class RegisterFragment: Fragment() {
         binding.registerButton.setOnClickListener {
             viewModel.performRegister()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -5,9 +5,9 @@ import java.sql.DriverManager
 
 class DatabaseHelper {
 
-    private val url = "jdbc:mariadb://10.0.2.2:3306/usuarios_app"
-    private val user = "root" 
-    private val password = ""
+    private val url = "jdbc:mariadb://23ibgy.h.filess.io:3305/cardvault_depthhill"
+    private val user = "cardvault_depthhill" 
+    private val password = "cartitasepicas123"
 
     @Throws(Exception::class)
     fun getConnection(): Connection {

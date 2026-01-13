@@ -11,6 +11,11 @@
         <action
                 android:id="@+id/createAccountAction"
                 app:destination="@id/registerFragment"/>
+        <action
+                android:id="@+id/action_loginFragment_to_collectionFragment"
+                app:destination="@id/collectionFragment"
+                app:popUpTo="@id/loginFragment"
+                app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -24,7 +29,15 @@
         android:id="@+id/collectionFragment"
         android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.CollectionFragment"
         android:label="Colección"
-        app:layout="@layout/collection_fragment" />
+        app:layout="@layout/collection_fragment">
+        <action
+            android:id="@+id/action_collectionFragment_to_collectionDetailFragment"
+            app:destination="@id/collectionDetailFragment" />
+        <argument
+            android:name="userId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
 
     <fragment
         android:id="@+id/eventsFragment"
@@ -48,7 +61,11 @@
         android:id="@+id/addCardFragment"
         android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.AddCardFragment"
         android:label="Añadir Carta"
-        app:layout="@layout/add_card_fragment" />
+        app:layout="@layout/add_card_fragment">
+        <argument
+            android:name="collectionId"
+            app:argType="integer" />
+    </fragment>
 
     <fragment
         android:id="@+id/addEventFragment"
@@ -61,5 +78,52 @@
         android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.AddMarketplaceItemFragment"
         android:label="Vender Carta"
         app:layout="@layout/add_marketplace_item_fragment" />
+
+    <fragment
+        android:id="@+id/collectionDetailFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.CollectionDetailFragment"
+        android:label="Detalle Colección"
+        app:layout="@layout/collection_detail_fragment">
+        <argument
+            android:name="collectionId"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addCollectionFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.AddCollectionFragment"
+        android:label="Nueva Colección"
+        app:layout="@layout/add_collection_fragment" />
+
+    <fragment
+        android:id="@+id/userSearchFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.UserSearchFragment"
+        android:label="Buscar Usuarios"
+        app:layout="@layout/search_users_fragment">
+        <action
+            android:id="@+id/action_userSearchFragment_to_publicCollectionFragment"
+            app:destination="@id/publicCollectionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/publicCollectionFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.CollectionFragment"
+        android:label="Colecciones Públicas">
+        <argument
+            android:name="userId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_publicCollectionFragment_to_publicCollectionDetailFragment"
+            app:destination="@id/publicCollectionDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/publicCollectionDetailFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.CollectionDetailFragment"
+        android:label="Detalle Colección">
+        <argument
+            android:name="collectionId"
+            app:argType="integer" />
+    </fragment>
 
 </navigation>

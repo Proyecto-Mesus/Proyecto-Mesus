@@ -1,19 +1,20 @@
 package es.cifpcarlos3.proyecto_mesus_android.viewmodels
 
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import es.cifpcarlos3.proyecto_mesus_android.data.db.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AuthViewModel: ViewModel() {
+class AuthViewModel(application: Application): AndroidViewModel(application) {
     private val _inputTextUser = MutableLiveData<String>()
     private val _inputTextPasswd = MutableLiveData<String>()
     
-    // Ahora usaremos esto para notificar el resultado del login (true/false)
     private val _loginResult = MutableLiveData<Boolean>()
     val loginResult: LiveData<Boolean> get() = _loginResult
 
@@ -21,6 +22,7 @@ class AuthViewModel: ViewModel() {
     val isButtonEnabled: LiveData<Boolean> get()= _isButtonEnabled
 
     private val dbHelper = DatabaseHelper()
+    private val sharedPrefs = application.getSharedPreferences("user_session", Context.MODE_PRIVATE)
 
     init{
         _isButtonEnabled.value = false
@@ -56,7 +58,7 @@ class AuthViewModel: ViewModel() {
                 withContext(Dispatchers.IO) {
                     val conn = dbHelper.getConnection()
                     conn?.use { connection ->
-                        val consulta = "SELECT * FROM usuarios WHERE nombre = ? AND password = ?"
+                        val consulta = "SELECT id_usuario, nombre_usuario FROM usuarios WHERE nombre_usuario = ? AND password = ?"
                         val stmt = connection.prepareStatement(consulta)
                         stmt.setString(1, user)
                         stmt.setString(2, passwd)
@@ -64,6 +66,13 @@ class AuthViewModel: ViewModel() {
                         val rs = stmt.executeQuery()
                         if (rs.next()) {
                             loginSuccess = true
+                            val userId = rs.getInt("id_usuario")
+                            sharedPrefs.edit().apply {
+                                putBoolean("isLoggedIn", true)
+                                putString("username", user)
+                                putInt("userId", userId)
+                                apply()
+                            }
                         }
                     }
                 }
