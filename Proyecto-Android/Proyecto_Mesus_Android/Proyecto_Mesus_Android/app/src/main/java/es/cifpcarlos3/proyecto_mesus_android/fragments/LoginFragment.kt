@@ -15,15 +15,14 @@ import es.cifpcarlos3.proyecto_mesus_android.databinding.LoginFragmentBinding
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.AuthViewModel
 
 class LoginFragment: Fragment() {
-    private var _binding: LoginFragmentBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: LoginFragmentBinding
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = LoginFragmentBinding.inflate(inflater, container, false)
+        binding = LoginFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -70,10 +69,5 @@ class LoginFragment: Fragment() {
         binding.buttonLogin.setOnClickListener {
            viewModel.performLogin()
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

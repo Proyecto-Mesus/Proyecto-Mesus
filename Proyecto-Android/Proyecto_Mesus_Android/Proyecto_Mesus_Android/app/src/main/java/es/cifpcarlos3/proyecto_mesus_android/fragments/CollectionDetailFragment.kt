@@ -23,8 +23,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 
 class CollectionDetailFragment : Fragment() {
-    private var _binding: CollectionDetailFragmentBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: CollectionDetailFragmentBinding
     private val viewModel: CollectionDetailViewModel by viewModels()
     private val args: CollectionDetailFragmentArgs by navArgs()
     private lateinit var adapter: CardAdapter
@@ -34,7 +33,7 @@ class CollectionDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = CollectionDetailFragmentBinding.inflate(inflater, container, false)
+        binding = CollectionDetailFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -89,8 +88,5 @@ class CollectionDetailFragment : Fragment() {
         viewModel.getCartas(args.collectionId)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

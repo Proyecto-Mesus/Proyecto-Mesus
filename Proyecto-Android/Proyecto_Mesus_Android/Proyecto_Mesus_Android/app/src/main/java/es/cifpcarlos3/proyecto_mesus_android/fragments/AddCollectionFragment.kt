@@ -17,8 +17,7 @@ import android.widget.ArrayAdapter
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Juego
 
 class AddCollectionFragment : Fragment() {
-    private var _binding: AddCollectionFragmentBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: AddCollectionFragmentBinding
     private val viewModel: AddCollectionViewModel by viewModels()
     private var gameList: List<Juego> = emptyList()
 
@@ -26,7 +25,7 @@ class AddCollectionFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = AddCollectionFragmentBinding.inflate(inflater, container, false)
+        binding = AddCollectionFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -68,10 +67,5 @@ class AddCollectionFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

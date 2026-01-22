@@ -108,10 +108,13 @@
     <fragment
         android:id="@+id/publicCollectionFragment"
         android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.CollectionFragment"
-        android:label="Colecciones Públicas">
+        android:label="Colección de {username}">
         <argument
             android:name="userId"
             app:argType="integer" />
+        <argument
+            android:name="username"
+            app:argType="string" />
         <action
             android:id="@+id/action_publicCollectionFragment_to_publicCollectionDetailFragment"
             app:destination="@id/publicCollectionDetailFragment" />

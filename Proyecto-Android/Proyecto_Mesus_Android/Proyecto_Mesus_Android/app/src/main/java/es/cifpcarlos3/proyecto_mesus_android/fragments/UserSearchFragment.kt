@@ -16,8 +16,7 @@ import es.cifpcarlos3.proyecto_mesus_android.adapters.UserAdapter
 
 class UserSearchFragment : Fragment() {
 
-    private var _binding: SearchUsersFragmentBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: SearchUsersFragmentBinding
     private val viewModel: UserSearchViewModel by viewModels()
     private lateinit var adapter: UserAdapter
 
@@ -25,7 +24,7 @@ class UserSearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = SearchUsersFragmentBinding.inflate(inflater, container, false)
+        binding = SearchUsersFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -33,7 +32,7 @@ class UserSearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         adapter = UserAdapter(emptyList()) { user ->
-            val action = UserSearchFragmentDirections.actionUserSearchFragmentToPublicCollectionFragment(user.idUsuario)
+            val action = UserSearchFragmentDirections.actionUserSearchFragmentToPublicCollectionFragment(user.idUsuario, user.nombre)
             findNavController().navigate(action)
         }
 
@@ -58,8 +57,5 @@ class UserSearchFragment : Fragment() {
         })
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

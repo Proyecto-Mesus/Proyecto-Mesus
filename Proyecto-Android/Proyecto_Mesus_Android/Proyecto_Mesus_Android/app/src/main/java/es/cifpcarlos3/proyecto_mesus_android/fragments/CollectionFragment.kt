@@ -25,8 +25,7 @@ import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 
 class CollectionFragment : Fragment() {
-    private var _binding: CollectionFragmentBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: CollectionFragmentBinding
     private val viewModel: CollectionViewModel by viewModels()
     private lateinit var adapter: CollectionAdapter
 
@@ -34,7 +33,7 @@ class CollectionFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = CollectionFragmentBinding.inflate(inflater, container, false)
+        binding = CollectionFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -91,8 +90,5 @@ class CollectionFragment : Fragment() {
         viewModel.getColecciones(userId)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

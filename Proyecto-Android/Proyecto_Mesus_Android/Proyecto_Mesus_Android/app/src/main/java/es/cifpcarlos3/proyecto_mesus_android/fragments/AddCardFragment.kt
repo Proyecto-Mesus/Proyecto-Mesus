@@ -18,8 +18,7 @@ import es.cifpcarlos3.proyecto_mesus_android.data.utils.CloudinaryHelper
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.AddCardViewModel
 
 class AddCardFragment : Fragment() {
-    private var _binding: AddCardFragmentBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: AddCardFragmentBinding
     private val viewModel: AddCardViewModel by viewModels()
     private val args: AddCardFragmentArgs by navArgs()
     
@@ -36,7 +35,7 @@ class AddCardFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = AddCardFragmentBinding.inflate(inflater, container, false)
+        binding = AddCardFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -71,10 +70,5 @@ class AddCardFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

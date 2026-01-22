@@ -10,19 +10,15 @@ import es.cifpcarlos3.proyecto_mesus_android.R
 import es.cifpcarlos3.proyecto_mesus_android.databinding.ChatFragmentBinding
 
 class ChatFragment : Fragment() {
-    private var _binding: ChatFragmentBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: ChatFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = ChatFragmentBinding.inflate(inflater, container, false)
+        binding = ChatFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
