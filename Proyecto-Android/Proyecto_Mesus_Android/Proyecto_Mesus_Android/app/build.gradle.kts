@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -62,4 +61,5 @@ dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client:2.4.4")
     implementation("com.cloudinary:cloudinary-android:2.5.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 }

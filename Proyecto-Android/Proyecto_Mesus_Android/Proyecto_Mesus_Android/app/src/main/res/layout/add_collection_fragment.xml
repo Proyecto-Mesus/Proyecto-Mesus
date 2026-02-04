@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nueva Colección"
+            android:text="@string/nuevaColeccion"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="32dp" />
@@ -22,7 +22,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nombre de la colección"
+            android:hint="@string/hintCollectionName"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginBottom="16dp">
 
@@ -35,7 +35,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Selecciona el Juego"
+            android:text="@string/hintSeleccionarJuego"
             android:layout_marginBottom="8dp" />
 
         <Spinner
@@ -48,15 +48,25 @@
             android:id="@+id/switch_public"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Colección Pública"
+            android:text="@string/publicaLabel"
             android:layout_marginBottom="24dp" />
 
         <Button
             android:id="@+id/btn_save_collection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Crear Colección"
+            android:text="@string/guardarColeccion"
             android:padding="12dp" />
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

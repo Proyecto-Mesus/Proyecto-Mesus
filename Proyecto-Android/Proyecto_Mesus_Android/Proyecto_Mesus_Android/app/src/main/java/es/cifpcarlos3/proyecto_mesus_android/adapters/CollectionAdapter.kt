@@ -5,13 +5,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
 import es.cifpcarlos3.proyecto_mesus_android.databinding.ItemCollectionBinding
+import es.cifpcarlos3.proyecto_mesus_android.R
 
 import android.widget.Filter
 import android.widget.Filterable
 
 class CollectionAdapter(
     private var fullList: List<Coleccion>,
-    private val onItemClick: (Coleccion) -> Unit
+    private val onItemClick: (Coleccion) -> Unit,
+    private val onLongClick: (Coleccion, android.view.View) -> Unit
 ) : RecyclerView.Adapter<CollectionAdapter.CollectionViewHolder>(), Filterable {
 
     private var filteredList: List<Coleccion> = fullList.toList()
@@ -27,21 +29,26 @@ class CollectionAdapter(
         val collection = filteredList[position]
         holder.binding.tvCollectionName.text = collection.nombre
         
+        val context = holder.itemView.context
         val gameName = when(collection.idJuego) {
-            1 -> "Pokémon"
-            2 -> "MTG"
-            3 -> "Yu-Gi-Oh!"
-            else -> "Otro"
+            1 -> context.getString(R.string.gamePokemon)
+            2 -> context.getString(R.string.gameMTG)
+            3 -> context.getString(R.string.gameYugioh)
+            else -> context.getString(R.string.gameOtro)
         }
-        val visibility = if (collection.publica == 1) "Pública" else "Privada"
+        val visibility = if (collection.publica == 1) context.getString(R.string.publica) else context.getString(R.string.privada)
         holder.binding.tvCollectionDetails.text = "$gameName • $visibility"
 
         holder.itemView.setOnClickListener { onItemClick(collection) }
+        holder.itemView.setOnLongClickListener { 
+            onLongClick(collection, it)
+            true
+        }
     }
 
     override fun getItemCount(): Int = filteredList.size
 
-    fun updateData(newList: List<Coleccion>) {
+    fun updateList(newList: List<Coleccion>) {
         this.fullList = newList
         this.filteredList = newList
         notifyDataSetChanged()

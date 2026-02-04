@@ -20,9 +20,9 @@ object CloudinaryHelper {
         }
     }
 
-    fun uploadImage(file: Any, onResult: (String?) -> Unit) {
+    suspend fun uploadImage(file: Any): String? = kotlin.coroutines.suspendCoroutine { continuation ->
         val uploadRequest = when (file) {
-            is Uri -> MediaManager.get().upload(file)
+            is android.net.Uri -> MediaManager.get().upload(file)
             is String -> MediaManager.get().upload(file)
             else -> MediaManager.get().upload(file.toString())
         }
@@ -33,10 +33,10 @@ object CloudinaryHelper {
                 override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
                 override fun onSuccess(requestId: String, resultData: Map<*, *>) {
                     val url = resultData["secure_url"] as? String
-                    onResult(url)
+                    continuation.resumeWith(Result.success(url))
                 }
                 override fun onError(requestId: String, error: ErrorInfo) {
-                    onResult(null)
+                    continuation.resumeWith(Result.success(null))
                 }
                 override fun onReschedule(requestId: String, error: ErrorInfo) {}
             }).dispatch()

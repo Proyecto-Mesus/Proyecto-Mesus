@@ -1,4 +1,12 @@
 <resources>
+    <string name="nombre">Nombre</string>
+    <string name="descripcion">Descripción</string>
+    <string name="precio">Precio</string>
+    <string name="fecha">Fecha</string>
+    <string name="guardarEvento">Guardar Evento</string>
+    <string name="eventoGuardado">Evento guardado con éxito</string>
+    <string name="publicarItem">Publicar Item</string>
+    <string name="itemGuardado">Item publicado con éxito</string>
     <string name="app_name">Proyecto Mesus Android</string>
     <string name="User">Usuario</string>
     <string name="Email">Correo</string>
@@ -14,4 +22,52 @@
     <string name="loginCorrecto">Login correcto</string>
     <string name="loginIncorrecto">Login incorrecto</string>
     <string name="contraseñasIncorrectas">Las contraseñas no coinciden</string>
+    <string name="actualizar">Actualizar</string>
+    <string name="cartaGuardada">Carta guardada con éxito</string>
+    <string name="errorNombreVacio">El nombre no puede estar vacío</string>
+    <string name="errorSubirImagen">Error al subir la imagen</string>
+    <string name="errorGuardarDB">Error al guardar en la base de datos</string>
+    <string name="seleccionarJuego">Por favor, selecciona un juego</string>
+    <string name="coleccionCreada">Colección creada</string>
+    <string name="eliminarColeccion">Eliminar Colección</string>
+    <string name="confirmarEliminarColeccion">¿Seguro que quieres eliminar \"%s\"? Se perderán todas las cartas dentro.</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="coleccionEliminada">Colección eliminada</string>
+    <string name="buscarColeccionHint">Buscar colección...</string>
+    <string name="eliminarCarta">Eliminar Carta</string>
+    <string name="confirmarEliminarCarta">¿Seguro que quieres eliminar \"%s\"?</string>
+    <string name="cartaEliminada">Carta eliminada</string>
+    <string name="buscarCartaHint">Buscar carta...</string>
+    <string name="subiendoImagen">Subiendo imagen...</string>
+    <string name="gamePokemon">Pokémon</string>
+    <string name="gameMTG">MTG</string>
+    <string name="gameYugioh">Yu-Gi-Oh!</string>
+    <string name="gameOtro">Otro</string>
+    <string name="publica">Pública</string>
+    <string name="privada">Privada</string>
+    
+    <string name="nuevaCarta">Nueva Carta</string>
+    <string name="seleccionarImagen">Seleccionar Imagen</string>
+    <string name="hintCardName">Nombre de la carta</string>
+    <string name="hintCardSet">Set / Expansión</string>
+    <string name="hintCardNumber">Número en el Set</string>
+    <string name="guardarCarta">Guardar Carta</string>
+    
+    <string name="nuevaColeccion">Nueva Colección</string>
+    <string name="hintCollectionName">Nombre de la colección</string>
+    <string name="hintSeleccionarJuego">Selecciona un juego</string>
+    <string name="publicaLabel">¿Pública?</string>
+    <string name="guardarColeccion">Guardar Colección</string>
+    
+    <string name="buscarUsuarios">Buscar Usuarios</string>
+    <string name="hintBuscarUsuario">Nombre de usuario</string>
+    <string name="noResultados">No se encontraron resultados</string>
+    <string name="registroExitoso">Usuario registrado correctamente</string>
+    <string name="usuarioExiste">El usuario ya existe</string>
+    <string name="emailExiste">El email ya existe</string>
+    <string name="coleccionTitular">Colección de %s</string>
+    <string name="errorSesion">Error de sesión</string>
+    <string name="errorGuardado">Error al guardar</string>
+    <string name="errorActualizacion">Error al actualizar</string>
 </resources>

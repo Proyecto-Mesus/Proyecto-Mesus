@@ -89,25 +89,33 @@ class MainActivity : AppCompatActivity() {
                     toolbar.visibility = View.GONE
                     drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
-                R.id.userSearchFragment, R.id.publicCollectionFragment, R.id.publicCollectionDetailFragment -> {
+                R.id.userSearchFragment -> {
                     bottomNavigationView.visibility = View.GONE
                     fab.visibility = View.GONE
                     toolbar.visibility = View.VISIBLE
                     drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
                 R.id.collectionDetailFragment -> {
+                    val bundle = navController.currentBackStackEntry?.arguments
+                    val username = bundle?.getString("username")
+                    val collectionId = bundle?.getInt("collectionId") ?: -1
+
                     bottomNavigationView.visibility = View.GONE
-                    fab.visibility = View.VISIBLE
                     toolbar.visibility = View.VISIBLE
                     drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                     
-                    val bundle = navController.currentBackStackEntry?.arguments
-                    val collectionId = bundle?.getInt("collectionId") ?: -1
-                    fab.setOnClickListener { 
-                        val newBundle = Bundle()
-                        newBundle.putInt("collectionId", collectionId)
-                        navController.navigate(R.id.addCardFragment, newBundle) 
-                    } 
+                    if (username != null) {
+                        fab.visibility = View.GONE
+                    } else {
+                        fab.visibility = View.VISIBLE
+                        fab.setOnClickListener { 
+                            val bundle = Bundle().apply {
+                                putInt("collectionId", collectionId)
+                                putSerializable("carta", null)
+                            }
+                            navController.navigate(R.id.addCardFragment, bundle)
+                        }
+                    }
                 }
                 R.id.chatListFragment -> {
                     bottomNavigationView.visibility = View.VISIBLE
@@ -116,11 +124,20 @@ class MainActivity : AppCompatActivity() {
                     drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 }
                 R.id.collectionFragment -> {
-                    bottomNavigationView.visibility = View.VISIBLE
-                    fab.visibility = View.VISIBLE
+                    val bundle = navController.currentBackStackEntry?.arguments
+                    val username = bundle?.getString("username")
+                    
+                    if (username != null) {
+                        bottomNavigationView.visibility = View.GONE
+                        fab.visibility = View.GONE
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                    } else {
+                        bottomNavigationView.visibility = View.VISIBLE
+                        fab.visibility = View.VISIBLE
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                        fab.setOnClickListener { navController.navigate(R.id.addCollectionFragment) }
+                    }
                     toolbar.visibility = View.VISIBLE
-                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-                    fab.setOnClickListener { navController.navigate(R.id.addCollectionFragment) }
                 }
                 R.id.eventsFragment -> {
                     bottomNavigationView.visibility = View.VISIBLE

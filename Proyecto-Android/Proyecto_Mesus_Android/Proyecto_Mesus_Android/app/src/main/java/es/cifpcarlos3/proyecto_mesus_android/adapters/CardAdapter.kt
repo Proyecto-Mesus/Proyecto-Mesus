@@ -13,7 +13,10 @@ import android.widget.Filterable
 import androidx.viewbinding.ViewBinding
 import es.cifpcarlos3.proyecto_mesus_android.databinding.ItemCardGridBinding
 
-class CardAdapter(private var fullList: List<Carta>) : RecyclerView.Adapter<CardAdapter.CardViewHolder>(), Filterable {
+class CardAdapter(
+    private var fullList: List<Carta>,
+    private val onLongClick: ((Carta, android.view.View) -> Unit)? = null
+) : RecyclerView.Adapter<CardAdapter.CardViewHolder>(), Filterable {
 
     private var filteredList: List<Carta> = fullList.toList()
     private var isGridView: Boolean = false
@@ -46,6 +49,11 @@ class CardAdapter(private var fullList: List<Carta>) : RecyclerView.Adapter<Card
             holder.binding.tvCardName.text = card.nombre
             holder.binding.tvCardDescription.text = "${card.set} #${card.numeroSet}"
             loadCardImage(holder.binding.ivCardImage, card.imagen)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            onLongClick?.invoke(card, it)
+            true
         }
     }
 

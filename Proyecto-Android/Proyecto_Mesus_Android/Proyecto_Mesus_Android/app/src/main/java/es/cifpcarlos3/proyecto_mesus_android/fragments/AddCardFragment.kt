@@ -9,19 +9,23 @@ import androidx.fragment.app.Fragment
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
+import es.cifpcarlos3.proyecto_mesus_android.R
 import es.cifpcarlos3.proyecto_mesus_android.databinding.AddCardFragmentBinding
 import es.cifpcarlos3.proyecto_mesus_android.data.utils.CloudinaryHelper
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.AddCardViewModel
+import es.cifpcarlos3.proyecto_mesus_android.viewmodels.CartaUiState
+import kotlinx.coroutines.launch
 
 class AddCardFragment : Fragment() {
     private lateinit var binding: AddCardFragmentBinding
     private val viewModel: AddCardViewModel by viewModels()
-    private val args: AddCardFragmentArgs by navArgs()
-    
+    private var collectionId: Int = -1
     private var selectedImageUri: Uri? = null
 
     private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -36,6 +40,7 @@ class AddCardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = AddCardFragmentBinding.inflate(inflater, container, false)
+        collectionId = arguments?.getInt("collectionId") ?: -1
         return binding.root
     }
 
@@ -43,6 +48,23 @@ class AddCardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         
         CloudinaryHelper.init(requireContext())
+
+        val cardToEdit = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getSerializable("carta", es.cifpcarlos3.proyecto_mesus_android.data.models.Carta::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getSerializable("carta") as? es.cifpcarlos3.proyecto_mesus_android.data.models.Carta
+        }
+        
+        if (cardToEdit != null) {
+            binding.etCardName.setText(cardToEdit.nombre)
+            binding.etCardSet.setText(cardToEdit.set)
+            binding.etCardNumber.setText(cardToEdit.numeroSet)
+            binding.btnSaveCard.text = getString(R.string.actualizar)
+            cardToEdit.imagen?.let {
+                Glide.with(this).load(it).into(binding.cardImagePreview)
+            }
+        }
 
         binding.btnSelectImage.setOnClickListener {
             selectImageLauncher.launch("image/*")
@@ -52,21 +74,48 @@ class AddCardFragment : Fragment() {
             val name = binding.etCardName.text.toString()
             val set = binding.etCardSet.text.toString()
             val number = binding.etCardNumber.text.toString()
-            viewModel.guardarCarta(name, set, number, selectedImageUri, args.collectionId)
+            
+            if (cardToEdit != null) {
+                viewModel.actualizarCarta(cardToEdit.idCarta, name, set, number, selectedImageUri, collectionId, cardToEdit.imagen)
+            } else {
+                viewModel.guardarCarta(name, set, number, selectedImageUri, collectionId)
+            }
         }
 
-        viewModel.isSaving.observe(viewLifecycleOwner) { isSaving ->
-            binding.btnSaveCard.isEnabled = !isSaving
-            binding.btnSelectImage.isEnabled = !isSaving
-        }
-
-        viewModel.uploadStatus.observe(viewLifecycleOwner) { status ->
-            status?.let {
-                if (it == "SUCCESS") {
-                    Snackbar.make(view, "Carta guardada con éxito", Snackbar.LENGTH_LONG).show()
-                    findNavController().popBackStack()
-                } else {
-                    Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    when (state) {
+                        is CartaUiState.Loading -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                            binding.btnSaveCard.isEnabled = false
+                            binding.btnSelectImage.isEnabled = false
+                            Snackbar.make(binding.root, getString(R.string.subiendoImagen), Snackbar.LENGTH_SHORT).show()
+                        }
+                        is CartaUiState.ActionSuccess -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.btnSaveCard.isEnabled = true
+                            binding.btnSelectImage.isEnabled = true
+                            Snackbar.make(binding.root, getString(R.string.cartaGuardada), Snackbar.LENGTH_LONG).show()
+                            findNavController().popBackStack()
+                        }
+                        is CartaUiState.Error -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.btnSaveCard.isEnabled = true
+                            binding.btnSelectImage.isEnabled = true
+                            val message = when(state.message) {
+                                "NOMBRE_VACIO" -> getString(R.string.errorNombreVacio)
+                                "SUBIR_IMAGEN_ERROR" -> getString(R.string.errorSubirImagen)
+                                "GUARDAR_DB_ERROR" -> getString(R.string.errorGuardarDB)
+                                else -> state.message
+                            }
+                            Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            binding.btnSaveCard.isEnabled = true
+                            binding.btnSelectImage.isEnabled = true
+                        }
+                    }
                 }
             }
         }

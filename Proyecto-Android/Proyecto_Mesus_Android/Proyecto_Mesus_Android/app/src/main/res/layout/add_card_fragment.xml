@@ -18,7 +18,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nueva Carta"
+                android:text="@string/nuevaCarta"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="24dp" />
@@ -44,13 +44,13 @@
                 android:id="@+id/btn_select_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Seleccionar Imagen"
+                android:text="@string/seleccionarImagen"
                 android:layout_marginBottom="24dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre de la carta"
+                android:hint="@string/hintCardName"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_marginBottom="16dp">
 
@@ -63,7 +63,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Set / Expansión"
+                android:hint="@string/hintCardSet"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_marginBottom="16dp">
 
@@ -76,7 +76,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Número en el Set"
+                android:hint="@string/hintCardNumber"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_marginBottom="24dp">
 
@@ -90,9 +90,19 @@
                 android:id="@+id/btn_save_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Guardar Carta"
+                android:text="@string/guardarCarta"
                 android:layout_marginTop="8dp" />
 
         </LinearLayout>
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

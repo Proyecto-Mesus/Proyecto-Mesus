@@ -2,22 +2,28 @@ package es.cifpcarlos3.proyecto_mesus_android.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import es.cifpcarlos3.proyecto_mesus_android.data.db.DatabaseHelper
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Usuario
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class UserSearchViewModel(application: Application) : AndroidViewModel(application) {
     private val dbHelper = DatabaseHelper()
 
-    private val _users = MutableLiveData<List<Usuario>>()
-    val users: LiveData<List<Usuario>> get() = _users
+    private val _uiState = MutableStateFlow<UsuarioUiState>(UsuarioUiState.Idle)
+    val uiState: StateFlow<UsuarioUiState> = _uiState
 
     fun searchUsers(query: String) {
+        if (query.isBlank()) {
+            _uiState.value = UsuarioUiState.SuccessList(emptyList())
+            return
+        }
+
+        _uiState.value = UsuarioUiState.Loading
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
                 val list = mutableListOf<Usuario>()
@@ -42,7 +48,7 @@ class UserSearchViewModel(application: Application) : AndroidViewModel(applicati
                 }
                 list
             }
-            _users.value = result
+            _uiState.value = UsuarioUiState.SuccessList(result)
         }
     }
 }

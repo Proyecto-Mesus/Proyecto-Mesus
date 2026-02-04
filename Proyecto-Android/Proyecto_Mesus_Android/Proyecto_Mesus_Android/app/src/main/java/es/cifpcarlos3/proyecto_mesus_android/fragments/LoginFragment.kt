@@ -6,22 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import es.cifpcarlos3.proyecto_mesus_android.R
 import es.cifpcarlos3.proyecto_mesus_android.databinding.LoginFragmentBinding
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.AuthViewModel
+import es.cifpcarlos3.proyecto_mesus_android.viewmodels.UsuarioUiState
+import kotlinx.coroutines.launch
 
 class LoginFragment: Fragment() {
     private lateinit var binding: LoginFragmentBinding
+    private val viewModel: AuthViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?){
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = LoginFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -34,40 +35,62 @@ class LoginFragment: Fragment() {
         }
 
         binding.buttonLoginGoogle.setOnClickListener {
-            val snackbar = Snackbar.make(view, getString(R.string.errorLogin), Snackbar.LENGTH_INDEFINITE)
+            val snackbar = Snackbar.make(binding.root, getString(R.string.errorLogin), Snackbar.LENGTH_INDEFINITE)
             snackbar.setAction(getString(R.string.cerrarSnackbar)) {
                 snackbar.dismiss()
             }
             snackbar.show()
         }
 
-        val viewModel = ViewModelProvider(this)[AuthViewModel::class.java]
-
-        binding.user.addTextChangedListener{
+        binding.user.addTextChangedListener {
             viewModel.onTextChanged(it.toString())
         }
 
-        binding.passwd.addTextChangedListener{
+        binding.passwd.addTextChangedListener {
             viewModel.onPasswdTextChanged(it.toString())
         }
 
-        viewModel.isButtonEnabled.observe(viewLifecycleOwner, Observer<Boolean> { value ->
-            binding.buttonLogin.isEnabled = value
-        })
-
-        viewModel.loginResult.observe(viewLifecycleOwner, Observer<Boolean> { success ->
-            if (success) {
-//                val snackbar = Snackbar.make(view, getString(R.string.loginCorrecto), Snackbar.LENGTH_LONG)
-//                snackbar.show()
-                findNavController().navigate(R.id.action_loginFragment_to_collectionFragment)
-            } else {
-                val snackbar = Snackbar.make(view, getString(R.string.loginIncorrecto), Snackbar.LENGTH_LONG)
-                snackbar.show()
-            }
-        })
-
         binding.buttonLogin.setOnClickListener {
-           viewModel.performLogin()
+            viewModel.performLogin()
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.isButtonEnabled.collect { enabled ->
+                        binding.buttonLogin.isEnabled = enabled
+                    }
+                }
+                launch {
+                    viewModel.uiState.collect { state ->
+                        when (state) {
+                            is UsuarioUiState.Loading -> {
+                                binding.progressBar.visibility = View.VISIBLE
+                                binding.buttonLogin.isEnabled = false
+                                binding.createAccount.isEnabled = false
+                            }
+                            is UsuarioUiState.ActionSuccess -> {
+                                binding.progressBar.visibility = View.GONE
+                                findNavController().navigate(R.id.eventsFragment)
+                            }
+                            is UsuarioUiState.Error -> {
+                                binding.progressBar.visibility = View.GONE
+                                binding.buttonLogin.isEnabled = true
+                                binding.createAccount.isEnabled = true
+                                val message = when (state.message) {
+                                    "LOGIN_FAILED" -> getString(R.string.loginIncorrecto)
+                                    else -> state.message
+                                }
+                                Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+                            }
+                            else -> {
+                                binding.buttonLogin.isEnabled = true
+                                binding.createAccount.isEnabled = true
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
