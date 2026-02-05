@@ -1,5 +1,6 @@
 package es.cifpcarlos3.api.controllers;
 
+import es.cifpcarlos3.api.dto.UsuarioSinContrasenaDTO;
 import es.cifpcarlos3.api.entities.Usuario;
 import es.cifpcarlos3.api.repositories.UsuarioRepository;
 import jakarta.validation.Valid;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -17,15 +19,14 @@ public class UsuarioController {
 
     //obtener un usuario por su nombre
     @GetMapping("/buscar/{nombre}")
-    public ResponseEntity<Usuario> findUsuarioByNombre(@PathVariable String nombre) {
-        return usuarioRepository.findByNombreUsuario(nombre)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> findUsuariosByNombre(@PathVariable String nombre) {
+        List<UsuarioSinContrasenaDTO> usuarios = usuarioRepository.obtenerUsuariosSinContrasenaPorNombreUsuario(nombre);
+        return ResponseEntity.ok(usuarios);
     }
 
     //añadir un usuario
     @PostMapping
-    public ResponseEntity<Usuario> createEmpleado(@Valid @RequestBody Usuario usuario) {
+    public ResponseEntity<Usuario> createUsuario(@Valid @RequestBody Usuario usuario) {
         return ResponseEntity.status(301).body(usuarioRepository.save(usuario));
     }
 
@@ -54,6 +55,19 @@ public class UsuarioController {
 
         //si el login es correcto, envío el usuario
         return ResponseEntity.ok(usuarioExistente);
+    }
+
+    // actualizar usuario
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> updateUsuario(@Valid @RequestBody Usuario usuarioNuevo, @PathVariable int id) {
+        return usuarioRepository.findById(id)
+                .map(usuario -> {
+                    usuario.setNombreUsuario(usuarioNuevo.getNombreUsuario());
+                    usuario.setPassword(usuarioNuevo.getPassword());
+                    usuario.setEmail(usuarioNuevo.getEmail());
+                    return ResponseEntity.ok(usuarioRepository.save(usuario));
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 }
