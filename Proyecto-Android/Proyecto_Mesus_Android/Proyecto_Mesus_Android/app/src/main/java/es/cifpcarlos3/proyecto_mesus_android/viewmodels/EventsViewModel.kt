@@ -24,6 +24,13 @@ class EventsViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<EventoUiState>(EventoUiState.Idle)
     val uiState: StateFlow<EventoUiState> = _uiState.asStateFlow()
 
+    private val _isListMode = MutableStateFlow(false)
+    val isListMode: StateFlow<Boolean> = _isListMode.asStateFlow()
+
+    fun toggleViewMode() {
+        _isListMode.value = !_isListMode.value
+    }
+
     fun fetchEvents() {
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.value = EventoUiState.Loading
@@ -31,6 +38,39 @@ class EventsViewModel : ViewModel() {
                 dbHelper.getConnection().use { conn ->
                     val query = "SELECT * FROM eventos"
                     conn.prepareStatement(query).use { stmt ->
+                        val rs: ResultSet = stmt.executeQuery()
+                        val events = mutableListOf<Evento>()
+                        while (rs.next()) {
+                            events.add(
+                                Evento(
+                                    rs.getInt("id_evento"),
+                                    rs.getString("nombre"),
+                                    rs.getString("descripcion"),
+                                    rs.getString("fecha"),
+                                    rs.getDouble("latitud"),
+                                    rs.getDouble("longitud")
+                                )
+                            )
+                        }
+                        _uiState.value = EventoUiState.Success(events)
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.value = EventoUiState.Error(e.message ?: "Error desconocido")
+            }
+        }
+    }
+
+    fun fetchMyEvents(userId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiState.value = EventoUiState.Loading
+            try {
+                dbHelper.getConnection().use { conn ->
+                    // Assuming there's an id_usuario column in eventos table.
+                    // If not, I'll need to verify the table schema.
+                    val query = "SELECT * FROM eventos WHERE id_usuario = ?"
+                    conn.prepareStatement(query).use { stmt ->
+                        stmt.setInt(1, userId)
                         val rs: ResultSet = stmt.executeQuery()
                         val events = mutableListOf<Evento>()
                         while (rs.next()) {

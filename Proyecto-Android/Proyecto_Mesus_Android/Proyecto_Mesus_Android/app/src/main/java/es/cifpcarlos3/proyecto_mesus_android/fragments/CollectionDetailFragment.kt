@@ -28,12 +28,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
-class CollectionDetailFragment : Fragment() {
+class CollectionDetailFragment : Fragment(), ViewTogglable {
     private lateinit var binding: CollectionDetailFragmentBinding
     private val viewModel: CollectionDetailViewModel by viewModels()
     private var collectionId: Int = -1
     private lateinit var adapter: CardAdapter
-    private var isGridView = false
+    override fun isListView(): Boolean = !viewModel.isGridView.value
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -88,8 +89,22 @@ class CollectionDetailFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    when (state) {
+                launch {
+                    viewModel.isGridView.collect { isGridView ->
+                        adapter.setViewType(isGridView)
+                        if (isGridView) {
+                            binding.rvCards.layoutManager = GridLayoutManager(requireContext(), 2)
+                        } else {
+                            binding.rvCards.layoutManager = LinearLayoutManager(requireContext())
+                        }
+                        binding.rvCards.adapter = adapter
+                        requireActivity().invalidateOptionsMenu()
+                    }
+                }
+                
+                launch {
+                    viewModel.uiState.collect { state ->
+                        when (state) {
                         is CartaUiState.Loading -> {
                             binding.progressBar.visibility = View.VISIBLE
                         }
@@ -117,16 +132,21 @@ class CollectionDetailFragment : Fragment() {
                 }
             }
         }
+    }
+
 
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_toolbar, menu)
-                
+                // Menu already inflated by MainActivity
+                // Only configure search here
+            }
+
+            override fun onPrepareMenu(menu: Menu) {
                 val searchItem = menu.findItem(R.id.action_search)
-                val searchView = searchItem.actionView as SearchView
-                searchView.queryHint = getString(R.string.buscarCartaHint)
+                val searchView = searchItem?.actionView as? SearchView
                 
-                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                searchView?.queryHint = getString(R.string.buscarCartaHint)
+                searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean = false
                     override fun onQueryTextChange(newText: String?): Boolean {
                         adapter.filter.filter(newText)
@@ -136,25 +156,16 @@ class CollectionDetailFragment : Fragment() {
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.action_toggle_view -> {
-                        isGridView = !isGridView
-                        adapter.setViewType(isGridView)
-                        
-                        if (isGridView) {
-                            binding.rvCards.layoutManager = GridLayoutManager(requireContext(), 2)
-                        } else {
-                            binding.rvCards.layoutManager = LinearLayoutManager(requireContext())
-                        }
-                        
-                        binding.rvCards.adapter = adapter
-                        true
-                    }
-                    else -> false
-                }
+                return false
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         
         viewModel.getCartas(collectionId)
+    }
+
+    override fun toggleView() {
+        viewModel.toggleViewMode()
+        requireActivity().invalidateOptionsMenu()
     }
 }

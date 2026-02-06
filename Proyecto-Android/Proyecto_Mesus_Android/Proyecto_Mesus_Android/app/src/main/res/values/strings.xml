@@ -70,4 +70,8 @@
     <string name="errorSesion">Error de sesión</string>
     <string name="errorGuardado">Error al guardar</string>
     <string name="errorActualizacion">Error al actualizar</string>
+
+    <string name="tab_all">Todos</string>
+    <string name="tab_my_events">Mis Eventos</string>
+    <string name="tab_my_sales">Mis Ventas</string>
 </resources>

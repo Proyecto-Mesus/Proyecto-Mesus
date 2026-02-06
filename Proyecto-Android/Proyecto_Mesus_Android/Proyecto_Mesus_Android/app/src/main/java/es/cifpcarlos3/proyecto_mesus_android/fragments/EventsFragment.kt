@@ -22,10 +22,12 @@ import es.cifpcarlos3.proyecto_mesus_android.viewmodels.EventoUiState
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
-class EventsFragment : Fragment(), OnMapReadyCallback {
+class EventsFragment : Fragment(), OnMapReadyCallback, ViewTogglable {
     private lateinit var binding: EventsFragmentBinding
     private val viewModel: EventsViewModel by viewModels()
     private var googleMap: GoogleMap? = null
+
+    override fun isListView(): Boolean = viewModel.isListMode.value
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,10 +47,36 @@ class EventsFragment : Fragment(), OnMapReadyCallback {
         viewModel.fetchEvents()
     }
 
+
+    override fun toggleView() {
+        viewModel.toggleViewMode()
+        requireActivity().invalidateOptionsMenu()
+    }
+
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
+                launch {
+                    viewModel.isListMode.collect { isListMode ->
+                        if (isListMode) {
+                            binding.mapContainer.visibility = View.GONE
+                            binding.listContainer.visibility = View.VISIBLE
+                            
+                            if (childFragmentManager.findFragmentByTag("events_tabs") == null) {
+                                childFragmentManager.beginTransaction()
+                                    .replace(R.id.listContainer, EventsTabFragment(), "events_tabs")
+                                    .commit()
+                            }
+                        } else {
+                            binding.mapContainer.visibility = View.VISIBLE
+                            binding.listContainer.visibility = View.GONE
+                        }
+                        requireActivity().invalidateOptionsMenu() // Refresh icon on change
+                    }
+                }
+                
+                launch {
+                    viewModel.uiState.collect { state ->
                     when (state) {
                         is EventoUiState.Loading -> {
                             binding.progressBar.visibility = View.VISIBLE
@@ -77,6 +105,8 @@ class EventsFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
+    }
+
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map

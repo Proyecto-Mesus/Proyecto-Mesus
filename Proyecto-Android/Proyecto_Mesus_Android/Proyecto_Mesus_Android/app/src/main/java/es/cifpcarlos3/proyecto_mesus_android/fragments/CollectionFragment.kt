@@ -120,15 +120,16 @@ class CollectionFragment : Fragment() {
 
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_toolbar, menu)
-                
-                menu.findItem(R.id.action_toggle_view)?.isVisible = false
+                // Menu already inflated by MainActivity
+                // Only configure search here
+            }
 
+            override fun onPrepareMenu(menu: Menu) {
                 val searchItem = menu.findItem(R.id.action_search)
-                val searchView = searchItem.actionView as SearchView
-                searchView.queryHint = getString(R.string.buscarColeccionHint)
+                val searchView = searchItem?.actionView as? SearchView
                 
-                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                searchView?.queryHint = getString(R.string.buscarColeccionHint)
+                searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean = false
                     override fun onQueryTextChange(newText: String?): Boolean {
                         adapter.filter.filter(newText)

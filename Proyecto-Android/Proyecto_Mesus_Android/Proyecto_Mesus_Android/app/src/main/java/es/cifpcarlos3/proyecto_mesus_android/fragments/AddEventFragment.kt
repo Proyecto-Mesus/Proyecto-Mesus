@@ -53,7 +53,10 @@ class AddEventFragment : Fragment(), OnMapReadyCallback {
                 return@setOnClickListener
             }
 
-            viewModel.saveEvent(name, desc, date, selectedLocation!!.latitude, selectedLocation!!.longitude)
+            val sharedPrefs = requireContext().getSharedPreferences("user_session", android.content.Context.MODE_PRIVATE)
+            val userId = sharedPrefs.getInt("userId", -1)
+
+            viewModel.saveEvent(name, desc, date, selectedLocation!!.latitude, selectedLocation!!.longitude, userId)
         }
 
         observeViewModel()

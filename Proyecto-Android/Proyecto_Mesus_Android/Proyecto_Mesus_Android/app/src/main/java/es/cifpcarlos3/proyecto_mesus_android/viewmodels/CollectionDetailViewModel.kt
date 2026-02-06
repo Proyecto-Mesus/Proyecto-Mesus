@@ -25,6 +25,13 @@ class CollectionDetailViewModel(application: Application) : AndroidViewModel(app
     private val _uiState = MutableStateFlow<CartaUiState>(CartaUiState.Idle)
     val uiState: StateFlow<CartaUiState> = _uiState
 
+    private val _isGridView = MutableStateFlow(false)
+    val isGridView: StateFlow<Boolean> = _isGridView
+
+    fun toggleViewMode() {
+        _isGridView.value = !_isGridView.value
+    }
+
     fun getCartas(collectionId: Int) {
         viewModelScope.launch {
             _uiState.value = CartaUiState.Loading

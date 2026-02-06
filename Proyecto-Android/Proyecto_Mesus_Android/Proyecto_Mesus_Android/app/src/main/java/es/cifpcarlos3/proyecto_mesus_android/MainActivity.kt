@@ -14,6 +14,12 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.appbar.MaterialToolbar
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
+import es.cifpcarlos3.proyecto_mesus_android.fragments.ViewTogglable
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -42,6 +48,8 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         bottomNavigationView.setupWithNavController(navController)
         navigationView.setupWithNavController(navController)
+
+        setupMenu()
 
         val sharedPrefs = getSharedPreferences("user_session", Context.MODE_PRIVATE)
         val isLoggedIn = sharedPrefs.getBoolean("isLoggedIn", false)
@@ -161,7 +169,54 @@ class MainActivity : AppCompatActivity() {
                     fab.setOnClickListener(null)
                 }
             }
+            invalidateOptionsMenu()
         }
+    }
+
+    private fun setupMenu() {
+        addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_toolbar, menu)
+            }
+
+            override fun onPrepareMenu(menu: Menu) {
+                val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+                
+                val toggleItem = menu.findItem(R.id.action_toggle_view)
+                val searchItem = menu.findItem(R.id.action_search)
+
+                if (currentFragment is ViewTogglable) {
+                    toggleItem?.isVisible = true
+                    toggleItem?.setIcon(if (currentFragment.isListView()) R.drawable.ic_map else R.drawable.ic_view_list)
+                    searchItem?.isVisible = false // Default hide search in togglable views unless needed
+                } else {
+                    toggleItem?.isVisible = false
+                    searchItem?.isVisible = destinationWithSearch()
+                }
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_toggle_view -> {
+                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                        val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+                        if (currentFragment is ViewTogglable) {
+                            currentFragment.toggleView()
+                            invalidateOptionsMenu()
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            }
+        })
+    }
+
+    private fun destinationWithSearch(): Boolean {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val id = navHostFragment.navController.currentDestination?.id
+        return id == R.id.collectionFragment || id == R.id.collectionDetailFragment || id == R.id.userSearchFragment
     }
 
     override fun onSupportNavigateUp(): Boolean {

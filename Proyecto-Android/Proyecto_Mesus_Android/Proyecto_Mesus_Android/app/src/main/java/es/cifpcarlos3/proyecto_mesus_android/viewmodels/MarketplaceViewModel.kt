@@ -24,6 +24,7 @@ class MarketplaceViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<MercadoUiState>(MercadoUiState.Idle)
     val uiState: StateFlow<MercadoUiState> = _uiState.asStateFlow()
 
+
     fun fetchItems() {
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.value = MercadoUiState.Loading
@@ -31,6 +32,40 @@ class MarketplaceViewModel : ViewModel() {
                 dbHelper.getConnection().use { conn ->
                     val query = "SELECT m.*, c.nombre as nombre_carta FROM mercado_items m LEFT JOIN cartas c ON m.id_carta = c.id_carta"
                     conn.prepareStatement(query).use { stmt ->
+                        val rs: ResultSet = stmt.executeQuery()
+                        val items = mutableListOf<MercadoItem>()
+                        while (rs.next()) {
+                            items.add(
+                                MercadoItem(
+                                    rs.getInt("id_item"),
+                                    rs.getString("nombre"),
+                                    rs.getString("descripcion"),
+                                    rs.getDouble("precio"),
+                                    rs.getDouble("latitud"),
+                                    rs.getDouble("longitud"),
+                                    rs.getInt("id_usuario"),
+                                    if (rs.getObject("id_carta") != null) rs.getInt("id_carta") else null,
+                                    rs.getString("nombre_carta")
+                                )
+                            )
+                        }
+                        _uiState.value = MercadoUiState.Success(items)
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.value = MercadoUiState.Error(e.message ?: "Error desconocido")
+            }
+        }
+    }
+
+    fun fetchMyItems(userId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiState.value = MercadoUiState.Loading
+            try {
+                dbHelper.getConnection().use { conn ->
+                    val query = "SELECT m.*, c.nombre as nombre_carta FROM mercado_items m LEFT JOIN cartas c ON m.id_carta = c.id_carta WHERE m.id_usuario = ?"
+                    conn.prepareStatement(query).use { stmt ->
+                        stmt.setInt(1, userId)
                         val rs: ResultSet = stmt.executeQuery()
                         val items = mutableListOf<MercadoItem>()
                         while (rs.next()) {

@@ -9,12 +9,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import es.cifpcarlos3.proyecto_mesus_android.R
 import es.cifpcarlos3.proyecto_mesus_android.databinding.MarketplaceFragmentBinding
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.MarketplaceViewModel
@@ -22,10 +16,10 @@ import es.cifpcarlos3.proyecto_mesus_android.viewmodels.MercadoUiState
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
-class MarketplaceFragment : Fragment(), OnMapReadyCallback {
+
+class MarketplaceFragment : Fragment() {
     private lateinit var binding: MarketplaceFragmentBinding
     private val viewModel: MarketplaceViewModel by viewModels()
-    private var googleMap: GoogleMap? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,8 +32,12 @@ class MarketplaceFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val mapFragment = childFragmentManager.findFragmentById(R.id.marketplace_map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        // Load Tabs Fragment
+        if (childFragmentManager.findFragmentByTag("marketplace_tabs") == null) {
+            childFragmentManager.beginTransaction()
+                .replace(R.id.listContainer, MarketplaceTabFragment(), "marketplace_tabs")
+                .commit()
+        }
 
         observeViewModel()
         viewModel.fetchItems()
@@ -55,20 +53,6 @@ class MarketplaceFragment : Fragment(), OnMapReadyCallback {
                         }
                         is MercadoUiState.Success -> {
                             binding.progressBar.visibility = View.GONE
-                            googleMap?.clear()
-                            state.list.forEach { item ->
-                                val pos = LatLng(item.latitud, item.longitud)
-                                val cardInfo = if (item.nombreCarta != null) " • Carta: ${item.nombreCarta}" else ""
-                                googleMap?.addMarker(
-                                    MarkerOptions().position(pos)
-                                        .title(item.nombre)
-                                        .snippet("${item.precio}€$cardInfo")
-                                )
-                            }
-                            if (state.list.isNotEmpty()) {
-                                val firstItem = LatLng(state.list[0].latitud, state.list[0].longitud)
-                                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(firstItem, 10f))
-                            }
                         }
                         is MercadoUiState.Error -> {
                             binding.progressBar.visibility = View.GONE
@@ -77,25 +61,6 @@ class MarketplaceFragment : Fragment(), OnMapReadyCallback {
                         else -> {}
                     }
                 }
-            }
-        }
-    }
-
-    override fun onMapReady(map: GoogleMap) {
-        googleMap = map
-        googleMap?.uiSettings?.isZoomControlsEnabled = true
-        
-        val currentState = viewModel.uiState.value
-        if (currentState is MercadoUiState.Success) {
-            googleMap?.clear()
-            currentState.list.forEach { item ->
-                val pos = LatLng(item.latitud, item.longitud)
-                val cardInfo = if (item.nombreCarta != null) " • Carta: ${item.nombreCarta}" else ""
-                googleMap?.addMarker(
-                    MarkerOptions().position(pos)
-                        .title(item.nombre)
-                        .snippet("${item.precio}€$cardInfo")
-                )
             }
         }
     }
