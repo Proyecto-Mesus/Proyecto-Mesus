@@ -15,7 +15,7 @@ public class Coleccion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_coleccion")
-    private Integer id;
+    private int id;
 
     @Column(nullable = false, length = 250)
     private String nombre;

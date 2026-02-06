@@ -18,7 +18,7 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
-    private Integer id;
+    private int id;
 
     @NotEmpty(message = "Debe haber un nombre de usuario")
     @Column(name = "nombre_usuario", nullable = false, unique = true, length = 250)
