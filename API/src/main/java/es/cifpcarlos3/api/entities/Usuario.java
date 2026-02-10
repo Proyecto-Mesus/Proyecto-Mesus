@@ -35,4 +35,8 @@ public class Usuario {
     @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Coleccion> colecciones;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "usuarios")
+    private List<Evento> eventos;
 }
