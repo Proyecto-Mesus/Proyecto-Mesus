@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Tarea Retrofit</string>
+    <!-- Textos para item_layout -->
+    <string name="character_name">Luke Skywalker</string>
+    <string name="character_height">172</string>
+    <string name="character_gender">Male</string>
+</resources>

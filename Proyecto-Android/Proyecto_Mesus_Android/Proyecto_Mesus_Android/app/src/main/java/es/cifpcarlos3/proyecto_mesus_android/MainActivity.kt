@@ -19,6 +19,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
+import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
 import es.cifpcarlos3.proyecto_mesus_android.fragments.ViewTogglable
 
 class MainActivity : AppCompatActivity() {
@@ -41,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.collectionFragment, R.id.eventsFragment, R.id.marketplaceFragment, R.id.chatListFragment),
+            setOf(R.id.collectionFragment, R.id.eventsFragment, R.id.chatListFragment),
             drawerLayout
         )
 
@@ -51,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
         setupMenu()
 
-        val sharedPrefs = getSharedPreferences("user_session", Context.MODE_PRIVATE)
+        val sharedPrefs = getSharedPreferences("user_session", MODE_PRIVATE)
         val isLoggedIn = sharedPrefs.getBoolean("isLoggedIn", false)
 
         if (isLoggedIn) {
@@ -80,7 +82,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 else -> {
-                    val handled = androidx.navigation.ui.NavigationUI.onNavDestinationSelected(menuItem, navController)
+                    val handled = onNavDestinationSelected(menuItem, navController)
                     if (handled) drawerLayout.closeDrawer(GravityCompat.START)
                     handled
                 }
@@ -90,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.loginFragment, R.id.registerFragment,
-                R.id.addCardFragment, R.id.addEventFragment, R.id.addMarketplaceItemFragment,
+                R.id.addCardFragment, R.id.addEventFragment,
                 R.id.addCollectionFragment -> {
                     bottomNavigationView.visibility = View.GONE
                     fab.visibility = View.GONE
@@ -107,6 +109,12 @@ class MainActivity : AppCompatActivity() {
                     val bundle = navController.currentBackStackEntry?.arguments
                     val username = bundle?.getString("username")
                     val collectionId = bundle?.getInt("collectionId") ?: -1
+                    val currentCollection = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        bundle?.getSerializable("coleccion", Coleccion::class.java)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        bundle?.getSerializable("coleccion") as? Coleccion
+                    }
 
                     bottomNavigationView.visibility = View.GONE
                     toolbar.visibility = View.VISIBLE
@@ -119,11 +127,18 @@ class MainActivity : AppCompatActivity() {
                         fab.setOnClickListener { 
                             val bundle = Bundle().apply {
                                 putInt("collectionId", collectionId)
+                                putSerializable("coleccion", currentCollection)
                                 putSerializable("carta", null)
                             }
                             navController.navigate(R.id.addCardFragment, bundle)
                         }
                     }
+                }
+                R.id.eventDetailFragment -> {
+                    bottomNavigationView.visibility = View.GONE
+                    fab.visibility = View.GONE
+                    toolbar.visibility = View.VISIBLE
+                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
                 R.id.chatListFragment -> {
                     bottomNavigationView.visibility = View.VISIBLE
@@ -154,13 +169,7 @@ class MainActivity : AppCompatActivity() {
                     drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                     fab.setOnClickListener { navController.navigate(R.id.addEventFragment) }
                 }
-                R.id.marketplaceFragment -> {
-                    bottomNavigationView.visibility = View.VISIBLE
-                    fab.visibility = View.VISIBLE
-                    toolbar.visibility = View.VISIBLE
-                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-                    fab.setOnClickListener { navController.navigate(R.id.addMarketplaceItemFragment) }
-                }
+
                 else -> {
                     bottomNavigationView.visibility = View.VISIBLE
                     fab.visibility = View.VISIBLE
@@ -188,8 +197,7 @@ class MainActivity : AppCompatActivity() {
 
                 if (currentFragment is ViewTogglable) {
                     toggleItem?.isVisible = true
-                    toggleItem?.setIcon(if (currentFragment.isListView()) R.drawable.ic_map else R.drawable.ic_view_list)
-                    searchItem?.isVisible = false // Default hide search in togglable views unless needed
+                    searchItem?.isVisible = false
                 } else {
                     toggleItem?.isVisible = false
                     searchItem?.isVisible = destinationWithSearch()

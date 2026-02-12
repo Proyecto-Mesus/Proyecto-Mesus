@@ -76,7 +76,6 @@ class AddCollectionFragment : Fragment() {
                     viewModel.juegosState.collect { state ->
                         when (state) {
                             is JuegoUiState.Loading -> {
-                                // Maybe show a small spinner for the spinner?
                             }
                             is JuegoUiState.Success -> {
                                 gameList = state.list

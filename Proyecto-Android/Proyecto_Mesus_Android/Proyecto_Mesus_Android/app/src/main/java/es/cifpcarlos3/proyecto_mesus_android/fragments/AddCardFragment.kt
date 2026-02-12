@@ -16,6 +16,8 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import es.cifpcarlos3.proyecto_mesus_android.R
+import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
+import es.cifpcarlos3.proyecto_mesus_android.data.models.Carta
 import es.cifpcarlos3.proyecto_mesus_android.databinding.AddCardFragmentBinding
 import es.cifpcarlos3.proyecto_mesus_android.data.utils.CloudinaryHelper
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.AddCardViewModel
@@ -26,6 +28,7 @@ class AddCardFragment : Fragment() {
     private lateinit var binding: AddCardFragmentBinding
     private val viewModel: AddCardViewModel by viewModels()
     private var collectionId: Int = -1
+    private var currentCollection: Coleccion? = null
     private var selectedImageUri: Uri? = null
 
     private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -41,6 +44,14 @@ class AddCardFragment : Fragment() {
     ): View {
         binding = AddCardFragmentBinding.inflate(inflater, container, false)
         collectionId = arguments?.getInt("collectionId") ?: -1
+        
+        currentCollection = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getSerializable("coleccion", Coleccion::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getSerializable("coleccion") as? Coleccion
+        }
+        
         return binding.root
     }
 
@@ -50,10 +61,10 @@ class AddCardFragment : Fragment() {
         CloudinaryHelper.init(requireContext())
 
         val cardToEdit = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getSerializable("carta", es.cifpcarlos3.proyecto_mesus_android.data.models.Carta::class.java)
+            arguments?.getSerializable("carta", Carta::class.java)
         } else {
             @Suppress("DEPRECATION")
-            arguments?.getSerializable("carta") as? es.cifpcarlos3.proyecto_mesus_android.data.models.Carta
+            arguments?.getSerializable("carta") as? Carta
         }
         
         if (cardToEdit != null) {
@@ -75,10 +86,15 @@ class AddCardFragment : Fragment() {
             val set = binding.etCardSet.text.toString()
             val number = binding.etCardNumber.text.toString()
             
+            if (currentCollection == null) {
+                Snackbar.make(binding.root, "Error: Colección no encontrada", Snackbar.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            
             if (cardToEdit != null) {
-                viewModel.actualizarCarta(cardToEdit.idCarta, name, set, number, selectedImageUri, collectionId, cardToEdit.imagen)
+                viewModel.actualizarCarta(cardToEdit.idCarta, name, set, number, selectedImageUri, currentCollection!!, cardToEdit.imagen)
             } else {
-                viewModel.guardarCarta(name, set, number, selectedImageUri, collectionId)
+                viewModel.guardarCarta(name, set, number, selectedImageUri, currentCollection!!)
             }
         }
 

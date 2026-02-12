@@ -95,7 +95,6 @@ class AddEventFragment : Fragment(), OnMapReadyCallback {
         googleMap = map
         googleMap?.uiSettings?.isZoomControlsEnabled = true
 
-        // Ubicación por defecto (España por ejemplo)
         val defaultLoc = LatLng(40.416775, -3.703790)
         googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLoc, 5f))
 

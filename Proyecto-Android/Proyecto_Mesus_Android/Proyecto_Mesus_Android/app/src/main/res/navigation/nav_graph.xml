@@ -51,13 +51,13 @@
         android:id="@+id/eventsFragment"
         android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.EventsFragment"
         android:label="Eventos"
-        app:layout="@layout/events_fragment" />
+        app:layout="@layout/events_fragment">
+        <action
+            android:id="@+id/action_eventsFragment_to_eventDetailFragment"
+            app:destination="@id/eventDetailFragment" />
+    </fragment>
 
-    <fragment
-        android:id="@+id/marketplaceFragment"
-        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.MarketplaceFragment"
-        android:label="Mercado"
-        app:layout="@layout/marketplace_fragment" />
+
 
     <fragment
         android:id="@+id/chatListFragment"
@@ -86,11 +86,7 @@
         android:label="Crear Evento"
         app:layout="@layout/add_event_fragment" />
 
-    <fragment
-        android:id="@+id/addMarketplaceItemFragment"
-        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.AddMarketplaceItemFragment"
-        android:label="Vender Carta"
-        app:layout="@layout/add_marketplace_item_fragment" />
+
 
     <fragment
         android:id="@+id/collectionDetailFragment"
@@ -130,6 +126,16 @@
         <action
             android:id="@+id/action_userSearchFragment_to_collectionFragment"
             app:destination="@id/collectionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/eventDetailFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.EventDetailFragment"
+        android:label="Detalle Evento"
+        app:layout="@layout/fragment_event_detail">
+        <argument
+            android:name="evento"
+            app:argType="es.cifpcarlos3.proyecto_mesus_android.data.models.Evento" />
     </fragment>
 
 </navigation>

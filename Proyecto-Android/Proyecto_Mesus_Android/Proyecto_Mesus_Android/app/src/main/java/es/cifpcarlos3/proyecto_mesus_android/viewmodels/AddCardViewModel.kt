@@ -3,6 +3,13 @@ package es.cifpcarlos3.proyecto_mesus_android.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import es.cifpcarlos3.proyecto_mesus_android.data.db.DatabaseHelper
+import es.cifpcarlos3.proyecto_mesus_android.data.models.Carta
+import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
+import es.cifpcarlos3.proyecto_mesus_android.data.models.Juego
+import es.cifpcarlos3.proyecto_mesus_android.data.models.Usuario
+import es.cifpcarlos3.proyecto_mesus_android.data.remote.RetrofitInstance
+import es.cifpcarlos3.proyecto_mesus_android.data.repository.CartaProvider
+import es.cifpcarlos3.proyecto_mesus_android.data.repository.JuegoProvider
 import es.cifpcarlos3.proyecto_mesus_android.data.utils.CloudinaryHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,12 +18,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AddCardViewModel : ViewModel() {
-    private val dbHelper = DatabaseHelper()
+    private val juegoProvider = JuegoProvider(RetrofitInstance.api)
+    private val cartaProvider = CartaProvider(RetrofitInstance.api)
 
     private val _uiState = MutableStateFlow<CartaUiState>(CartaUiState.Idle)
     val uiState: StateFlow<CartaUiState> = _uiState
 
-    fun guardarCarta(nombre: String, set: String, numeroSet: String, imageFile: Any?, collectionId: Int) {
+    fun guardarCarta(nombre: String, set: String, numeroSet: String, imageFile: Any?, coleccion: Coleccion) {
         if (nombre.isBlank()) {
             _uiState.value = CartaUiState.Error("NOMBRE_VACIO")
             return
@@ -34,34 +42,31 @@ class AddCardViewModel : ViewModel() {
                 return@launch
             }
 
-            val success = withContext(Dispatchers.IO) {
-                try {
-                    val conn = dbHelper.getConnection()
-                    conn?.use { connection ->
-                        val query = "INSERT INTO cartas (nombre, `set`, numero_set, imagen, id_coleccion) VALUES (?, ?, ?, ?, ?)"
-                        val stmt = connection.prepareStatement(query)
-                        stmt.setString(1, nombre)
-                        stmt.setString(2, set)
-                        stmt.setString(3, numeroSet)
-                        stmt.setString(4, imageUrl)
-                        stmt.setInt(5, collectionId)
-                        stmt.executeUpdate() > 0
-                    } ?: false
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    false
-                }
+            var juegoObject: Juego? = null
+            val juegosResult = withContext(Dispatchers.IO) { juegoProvider.getJuegos() }
+            
+            juegoObject = juegosResult.getOrNull()?.find { it.idJuego == coleccion.idJuego }
+            
+            if (juegoObject == null) {
+               juegoObject = Juego(coleccion.idJuego, "Unknown")
+            }
+            
+            val usuario = Usuario(coleccion.idUsuario, "Unknown")
+            val carta = Carta(0, nombre, set, numeroSet, coleccion.idColeccion, imageUrl)
+
+            val result = withContext(Dispatchers.IO) {
+                cartaProvider.createCarta(carta, coleccion, usuario, juegoObject)
             }
 
-            if (success) {
+            result.onSuccess {
                 _uiState.value = CartaUiState.ActionSuccess
-            } else {
-                _uiState.value = CartaUiState.Error("GUARDAR_DB_ERROR")
+            }.onFailure { exception ->
+                 _uiState.value = CartaUiState.Error(exception.message ?: "GUARDAR_DB_ERROR")
             }
         }
     }
 
-    fun actualizarCarta(idCarta: Int, nombre: String, set: String, numeroSet: String, imageFile: Any?, collectionId: Int, oldImageUrl: String?) {
+    fun actualizarCarta(idCarta: Int, nombre: String, set: String, numeroSet: String, imageFile: Any?, coleccion: Coleccion, oldImageUrl: String?) {
         if (nombre.isBlank()) {
             _uiState.value = CartaUiState.Error("NOMBRE_VACIO")
             return
@@ -81,31 +86,27 @@ class AddCardViewModel : ViewModel() {
                 _uiState.value = CartaUiState.Error("SUBIR_IMAGEN_ERROR")
                 return@launch
             }
+            
+            var juegoObject: Juego? = null
+            val juegosResult = withContext(Dispatchers.IO) { juegoProvider.getJuegos() }
+            
+            juegoObject = juegosResult.getOrNull()?.find { it.idJuego == coleccion.idJuego }
+            
+            if (juegoObject == null) {
+               juegoObject = Juego(coleccion.idJuego, "Unknown")
+            }
+            
+             val usuario = Usuario(coleccion.idUsuario, "Unknown")
+             val carta = Carta(idCarta, nombre, set, numeroSet, coleccion.idColeccion, imageUrl)
 
-            val success = withContext(Dispatchers.IO) {
-                try {
-                    val conn = dbHelper.getConnection()
-                    conn?.use { connection ->
-                        val query = "UPDATE cartas SET nombre = ?, `set` = ?, numero_set = ?, imagen = ?, id_coleccion = ? WHERE id_carta = ?"
-                        val stmt = connection.prepareStatement(query)
-                        stmt.setString(1, nombre)
-                        stmt.setString(2, set)
-                        stmt.setString(3, numeroSet)
-                        stmt.setString(4, imageUrl)
-                        stmt.setInt(5, collectionId)
-                        stmt.setInt(6, idCarta)
-                        stmt.executeUpdate() > 0
-                    } ?: false
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    false
-                }
+            val result = withContext(Dispatchers.IO) {
+                cartaProvider.updateCarta(idCarta, carta, coleccion, usuario, juegoObject)
             }
 
-            if (success) {
+            result.onSuccess {
                 _uiState.value = CartaUiState.ActionSuccess
-            } else {
-                _uiState.value = CartaUiState.Error("GUARDAR_DB_ERROR")
+            }.onFailure { exception ->
+                 _uiState.value = CartaUiState.Error(exception.message ?: "GUARDAR_DB_ERROR")
             }
         }
     }

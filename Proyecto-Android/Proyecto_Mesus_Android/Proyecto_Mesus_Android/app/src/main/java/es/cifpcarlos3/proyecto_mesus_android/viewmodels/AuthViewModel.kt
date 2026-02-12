@@ -6,6 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import es.cifpcarlos3.proyecto_mesus_android.data.db.DatabaseHelper
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Usuario
+import es.cifpcarlos3.proyecto_mesus_android.data.remote.RetrofitInstance
+import es.cifpcarlos3.proyecto_mesus_android.data.repository.UsuarioProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +32,7 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
     private val _isButtonEnabled = MutableStateFlow<Boolean>(false)
     val isButtonEnabled: StateFlow<Boolean> get()= _isButtonEnabled
 
-    private val dbHelper = DatabaseHelper()
+    private val repository = UsuarioProvider(RetrofitInstance.api)
     private val sharedPrefs = application.getSharedPreferences("user_session", Context.MODE_PRIVATE)
 
     fun onTextChanged(value: String)
@@ -52,37 +54,20 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
     fun performLogin() {
         _uiState.value = UsuarioUiState.Loading
         viewModelScope.launch {
-            var loginSuccess = false
-            try {
-                withContext(Dispatchers.IO) {
-                    val conn = dbHelper.getConnection()
-                    conn?.use { connection ->
-                        val consulta = "SELECT id_usuario, nombre_usuario FROM usuarios WHERE nombre_usuario = ? AND password = ?"
-                        val stmt = connection.prepareStatement(consulta)
-                        stmt.setString(1, inputTextUser)
-                        stmt.setString(2, inputTextPasswd)
-                        
-                        val rs = stmt.executeQuery()
-                        if (rs.next()) {
-                            loginSuccess = true
-                            val userId = rs.getInt("id_usuario")
-                            sharedPrefs.edit().apply {
-                                putBoolean("isLoggedIn", true)
-                                putString("username", inputTextUser)
-                                putInt("userId", userId)
-                                apply()
-                            }
-                        }
-                    }
-                }
-            } catch (e: Throwable) {
-                e.printStackTrace()
+            val result = withContext(Dispatchers.IO) {
+                repository.login(inputTextUser, inputTextPasswd)
             }
             
-            if (loginSuccess) {
+            result.onSuccess { user ->
+                sharedPrefs.edit().apply {
+                    putBoolean("isLoggedIn", true)
+                    putString("username", user.nombre)
+                    putInt("userId", user.idUsuario)
+                    apply()
+                }
                 _uiState.value = UsuarioUiState.ActionSuccess
-            } else {
-                _uiState.value = UsuarioUiState.Error("LOGIN_FAILED")
+            }.onFailure { exception ->
+                _uiState.value = UsuarioUiState.Error(exception.message ?: "LOGIN_FAILED")
             }
         }
     }

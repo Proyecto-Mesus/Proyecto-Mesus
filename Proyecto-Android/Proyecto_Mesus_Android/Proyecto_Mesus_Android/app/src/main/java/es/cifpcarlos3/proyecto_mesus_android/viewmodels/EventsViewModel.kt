@@ -66,8 +66,6 @@ class EventsViewModel : ViewModel() {
             _uiState.value = EventoUiState.Loading
             try {
                 dbHelper.getConnection().use { conn ->
-                    // Assuming there's an id_usuario column in eventos table.
-                    // If not, I'll need to verify the table schema.
                     val query = "SELECT * FROM eventos WHERE id_usuario = ?"
                     conn.prepareStatement(query).use { stmt ->
                         stmt.setInt(1, userId)

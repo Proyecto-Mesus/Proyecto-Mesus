@@ -1,5 +1,6 @@
 package es.cifpcarlos3.proyecto_mesus_android.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +27,7 @@ import androidx.core.view.MenuProvider
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class CollectionFragment : Fragment() {
     private lateinit var binding: CollectionFragmentBinding
@@ -53,12 +55,13 @@ class CollectionFragment : Fragment() {
             onItemClick = { coleccion ->
                 val bundle = Bundle().apply {
                     putInt("collectionId", coleccion.idColeccion)
+                    putSerializable("coleccion", coleccion)
                     putString("username", arguments?.getString("username"))
                 }
                 findNavController().navigate(R.id.collectionDetailFragment, bundle)
             },
             onLongClick = { coleccion, cardView ->
-                val currentUserId = requireContext().getSharedPreferences("user_session", android.content.Context.MODE_PRIVATE).getInt("userId", -1)
+                val currentUserId = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE).getInt("userId", -1)
                 
                 if (coleccion.idUsuario == currentUserId) {
                     val popup = androidx.appcompat.widget.PopupMenu(requireContext(), cardView)
@@ -74,7 +77,7 @@ class CollectionFragment : Fragment() {
                                 true
                             }
                             R.id.action_delete -> {
-                            com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                            MaterialAlertDialogBuilder(requireContext())
                                     .setTitle(getString(R.string.eliminarColeccion))
                                     .setMessage(getString(R.string.confirmarEliminarColeccion, coleccion.nombre))
                                     .setPositiveButton(getString(R.string.eliminar)) { _, _ ->
@@ -120,8 +123,6 @@ class CollectionFragment : Fragment() {
 
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                // Menu already inflated by MainActivity
-                // Only configure search here
             }
 
             override fun onPrepareMenu(menu: Menu) {

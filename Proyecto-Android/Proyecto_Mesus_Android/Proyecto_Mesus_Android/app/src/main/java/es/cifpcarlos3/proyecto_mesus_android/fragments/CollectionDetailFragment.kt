@@ -25,13 +25,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import es.cifpcarlos3.proyecto_mesus_android.MainActivity
+import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
 import kotlinx.coroutines.launch
 
 class CollectionDetailFragment : Fragment(), ViewTogglable {
     private lateinit var binding: CollectionDetailFragmentBinding
     private val viewModel: CollectionDetailViewModel by viewModels()
     private var collectionId: Int = -1
+    private var currentCollection: Coleccion? = null
     private lateinit var adapter: CardAdapter
     override fun isListView(): Boolean = !viewModel.isGridView.value
 
@@ -42,6 +46,12 @@ class CollectionDetailFragment : Fragment(), ViewTogglable {
     ): View {
         binding = CollectionDetailFragmentBinding.inflate(inflater, container, false)
         collectionId = arguments?.getInt("collectionId") ?: -1
+        currentCollection = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getSerializable("coleccion", Coleccion::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getSerializable("coleccion") as? Coleccion
+        }
         return binding.root
     }
 
@@ -49,7 +59,7 @@ class CollectionDetailFragment : Fragment(), ViewTogglable {
         super.onViewCreated(view, savedInstanceState)
 
         adapter = CardAdapter(emptyList()) { card, cardView ->
-            val userId = requireContext().getSharedPreferences("user_session", android.content.Context.MODE_PRIVATE).getInt("userId", -1)
+            val userId = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE).getInt("userId", -1)
             
             val currentState = viewModel.uiState.value
             if (currentState is CartaUiState.Success && currentState.ownerId == userId) {
@@ -61,13 +71,14 @@ class CollectionDetailFragment : Fragment(), ViewTogglable {
                         R.id.action_edit -> {
                             val bundle = Bundle().apply {
                                 putInt("collectionId", collectionId)
+                                putSerializable("coleccion", currentCollection)
                                 putSerializable("carta", card)
                             }
                             findNavController().navigate(R.id.addCardFragment, bundle)
                             true
                         }
                         R.id.action_delete -> {
-                            com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                            MaterialAlertDialogBuilder(requireContext())
                                 .setTitle(getString(R.string.eliminarCarta))
                                 .setMessage(getString(R.string.confirmarEliminarCarta, card.nombre))
                                 .setPositiveButton(getString(R.string.eliminar)) { _, _ ->
@@ -118,9 +129,8 @@ class CollectionDetailFragment : Fragment(), ViewTogglable {
                             val isOwner = state.ownerId == currentUserId
                             val isPublicView = arguments?.containsKey("userId") == true
                             
-                            // Hide FAB if viewing someone else's collection
                             if (isPublicView || (state.ownerId != -1 && !isOwner)) {
-                                (activity as? es.cifpcarlos3.proyecto_mesus_android.MainActivity)?.findViewById<View>(R.id.float_button)?.visibility = View.GONE
+                                (activity as? MainActivity)?.findViewById<View>(R.id.float_button)?.visibility = View.GONE
                             }
                         }
                         is CartaUiState.Error -> {
@@ -137,8 +147,7 @@ class CollectionDetailFragment : Fragment(), ViewTogglable {
 
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                // Menu already inflated by MainActivity
-                // Only configure search here
+
             }
 
             override fun onPrepareMenu(menu: Menu) {

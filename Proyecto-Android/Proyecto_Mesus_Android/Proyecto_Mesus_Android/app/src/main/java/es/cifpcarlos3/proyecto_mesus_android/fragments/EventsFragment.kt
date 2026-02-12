@@ -71,7 +71,7 @@ class EventsFragment : Fragment(), OnMapReadyCallback, ViewTogglable {
                             binding.mapContainer.visibility = View.VISIBLE
                             binding.listContainer.visibility = View.GONE
                         }
-                        requireActivity().invalidateOptionsMenu() // Refresh icon on change
+                        requireActivity().invalidateOptionsMenu()
                     }
                 }
                 
@@ -101,12 +101,11 @@ class EventsFragment : Fragment(), OnMapReadyCallback, ViewTogglable {
                         }
                         else -> {}
                     }
+                    }
                 }
             }
         }
     }
-    }
-
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map

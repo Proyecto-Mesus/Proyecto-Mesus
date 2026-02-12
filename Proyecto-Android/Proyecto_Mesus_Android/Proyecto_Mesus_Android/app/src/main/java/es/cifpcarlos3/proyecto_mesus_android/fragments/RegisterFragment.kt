@@ -111,7 +111,6 @@ class RegisterFragment : Fragment() {
                                         binding.registerEmail.error = getString(R.string.emailExiste)
                                     }
                                     else -> {
-                                        // Handled by general Snackbar
                                     }
                                 }
                             }

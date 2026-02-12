@@ -5,8 +5,7 @@
     <string name="fecha">Fecha</string>
     <string name="guardarEvento">Guardar Evento</string>
     <string name="eventoGuardado">Evento guardado con éxito</string>
-    <string name="publicarItem">Publicar Item</string>
-    <string name="itemGuardado">Item publicado con éxito</string>
+
     <string name="app_name">Proyecto Mesus Android</string>
     <string name="User">Usuario</string>
     <string name="Email">Correo</string>
@@ -73,5 +72,4 @@
 
     <string name="tab_all">Todos</string>
     <string name="tab_my_events">Mis Eventos</string>
-    <string name="tab_my_sales">Mis Ventas</string>
 </resources>

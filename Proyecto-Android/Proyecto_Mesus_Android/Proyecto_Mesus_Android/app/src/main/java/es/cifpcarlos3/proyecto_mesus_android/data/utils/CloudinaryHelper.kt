@@ -5,6 +5,7 @@ import android.net.Uri
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
+import kotlin.coroutines.suspendCoroutine
 
 object CloudinaryHelper {
     private var isInitialized = false
@@ -20,9 +21,9 @@ object CloudinaryHelper {
         }
     }
 
-    suspend fun uploadImage(file: Any): String? = kotlin.coroutines.suspendCoroutine { continuation ->
+    suspend fun uploadImage(file: Any): String? = suspendCoroutine { continuation ->
         val uploadRequest = when (file) {
-            is android.net.Uri -> MediaManager.get().upload(file)
+            is Uri -> MediaManager.get().upload(file)
             is String -> MediaManager.get().upload(file)
             else -> MediaManager.get().upload(file.toString())
         }

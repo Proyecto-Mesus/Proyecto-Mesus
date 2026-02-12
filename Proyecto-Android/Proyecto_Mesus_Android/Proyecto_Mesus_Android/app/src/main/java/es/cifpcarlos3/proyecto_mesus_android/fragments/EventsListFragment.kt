@@ -10,7 +10,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import es.cifpcarlos3.proyecto_mesus_android.R
 import es.cifpcarlos3.proyecto_mesus_android.adapters.EventAdapter
 import es.cifpcarlos3.proyecto_mesus_android.databinding.FragmentListBinding
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.EventsViewModel
@@ -40,19 +42,7 @@ class EventsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
-        
-        observeViewModel()
 
-        if (showOnlyMine) {
-            val sharedPrefs = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE)
-            val userId = sharedPrefs.getInt("userId", -1)
-            viewModel.fetchMyEvents(userId)
-        } else {
-            viewModel.fetchEvents()
-        }
-    }
-
-    private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
@@ -62,7 +52,12 @@ class EventsListFragment : Fragment() {
                         }
                         is EventoUiState.Success -> {
                             binding.progressBar.visibility = View.GONE
-                            binding.recyclerView.adapter = EventAdapter(state.list)
+                            binding.recyclerView.adapter = EventAdapter(state.list) { event ->
+                                val bundle = Bundle().apply {
+                                    putSerializable("evento", event)
+                                }
+                                findNavController().navigate(R.id.action_eventsFragment_to_eventDetailFragment, bundle)
+                            }
                         }
                         else -> {
                             binding.progressBar.visibility = View.GONE
@@ -70,6 +65,14 @@ class EventsListFragment : Fragment() {
                     }
                 }
             }
+        }
+
+        if (showOnlyMine) {
+            val sharedPrefs = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE)
+            val userId = sharedPrefs.getInt("userId", -1)
+            viewModel.fetchMyEvents(userId)
+        } else {
+            viewModel.fetchEvents()
         }
     }
 

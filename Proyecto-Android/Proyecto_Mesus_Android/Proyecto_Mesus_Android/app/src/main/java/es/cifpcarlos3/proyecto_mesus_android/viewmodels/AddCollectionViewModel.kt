@@ -1,10 +1,16 @@
 package es.cifpcarlos3.proyecto_mesus_android.viewmodels
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import es.cifpcarlos3.proyecto_mesus_android.data.db.DatabaseHelper
+import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Juego
+import es.cifpcarlos3.proyecto_mesus_android.data.models.Usuario
+import es.cifpcarlos3.proyecto_mesus_android.data.remote.RetrofitInstance
+import es.cifpcarlos3.proyecto_mesus_android.data.repository.ColeccionProvider
+import es.cifpcarlos3.proyecto_mesus_android.data.repository.JuegoProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,8 +25,9 @@ sealed class JuegoUiState {
 }
 
 class AddCollectionViewModel(application: Application) : AndroidViewModel(application) {
-    private val dbHelper = DatabaseHelper()
-    private val sharedPrefs = application.getSharedPreferences("user_session", android.content.Context.MODE_PRIVATE)
+    private val juegoProvider = JuegoProvider(RetrofitInstance.api)
+    private val coleccionProvider = ColeccionProvider(RetrofitInstance.api)
+    private val sharedPrefs = application.getSharedPreferences("user_session", Context.MODE_PRIVATE)
 
     private val _uiState = MutableStateFlow<ColeccionUiState>(ColeccionUiState.Idle)
     val uiState: StateFlow<ColeccionUiState> = _uiState
@@ -31,24 +38,14 @@ class AddCollectionViewModel(application: Application) : AndroidViewModel(applic
     fun fetchJuegos() {
         _juegosState.value = JuegoUiState.Loading
         viewModelScope.launch {
-            val list = withContext(Dispatchers.IO) {
-                val resultList = mutableListOf<Juego>()
-                try {
-                    val conn = dbHelper.getConnection()
-                    conn?.use { connection ->
-                        val query = "SELECT id_juego, nombre FROM juegos"
-                        val stmt = connection.prepareStatement(query)
-                        val rs = stmt.executeQuery()
-                        while (rs.next()) {
-                            resultList.add(Juego(rs.getInt("id_juego"), rs.getString("nombre")))
-                        }
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                resultList
+            val result = withContext(Dispatchers.IO) {
+                juegoProvider.getJuegos()
             }
-            _juegosState.value = JuegoUiState.Success(list)
+            result.onSuccess { juegos ->
+                _juegosState.value = JuegoUiState.Success(juegos)
+            }.onFailure { exception ->
+                _juegosState.value = JuegoUiState.Error(exception.message ?: "Error al cargar juegos")
+            }
         }
     }
 
@@ -64,31 +61,31 @@ class AddCollectionViewModel(application: Application) : AndroidViewModel(applic
             return
         }
 
+        val username = sharedPrefs.getString("username", "User") ?: "User"
+
+        val juegos = (_juegosState.value as? JuegoUiState.Success)?.list
+        val juegoSeleccionado = juegos?.find { it.idJuego == idJuego } ?: Juego(idJuego, "Unknown")
+
+        val usuario = Usuario(userId, username)
+        
+        val coleccion = Coleccion(
+            idColeccion = 0,
+            nombre = nombre,
+            idUsuario = userId,
+            idJuego = idJuego,
+            publica = if (isPublic) 1 else 0
+        )
+
         _uiState.value = ColeccionUiState.Loading
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
-                try {
-                    val conn = dbHelper.getConnection()
-                    conn?.use { connection ->
-                        val query =
-                            "INSERT INTO colecciones (nombre, id_usuario, id_juego, publica) VALUES (?, ?, ?, ?)"
-                        val stmt = connection.prepareStatement(query)
-                        stmt.setString(1, nombre)
-                        stmt.setInt(2, userId)
-                        stmt.setInt(3, idJuego)
-                        stmt.setInt(4, if (isPublic) 1 else 0)
-                        stmt.executeUpdate() > 0
-                    } ?: false
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    false
-                }
+                coleccionProvider.createColeccion(coleccion, usuario, juegoSeleccionado)
             }
 
-            if (result) {
+            result.onSuccess {
                 _uiState.value = ColeccionUiState.ActionSuccess
-            } else {
-                _uiState.value = ColeccionUiState.Error("GUARDAR_ERROR")
+            }.onFailure { exception ->
+                _uiState.value = ColeccionUiState.Error(exception.message ?: "GUARDAR_ERROR")
             }
         }
     }
@@ -98,31 +95,33 @@ class AddCollectionViewModel(application: Application) : AndroidViewModel(applic
             _uiState.value = ColeccionUiState.Error("NOMBRE_VACIO")
             return
         }
+        
+        val userId = sharedPrefs.getInt("userId", -1)
+        val username = sharedPrefs.getString("username", "User") ?: "User"
+        
+        val juegos = (_juegosState.value as? JuegoUiState.Success)?.list
+        val juegoSeleccionado = juegos?.find { it.idJuego == idJuego } ?: Juego(idJuego, "Unknown")
+        
+        val usuario = Usuario(userId, username)
+
+        val coleccion = Coleccion(
+            idColeccion = idColeccion,
+            nombre = nombre,
+            idUsuario = userId,
+            idJuego = idJuego,
+            publica = if (isPublic) 1 else 0
+        )
 
         _uiState.value = ColeccionUiState.Loading
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
-                try {
-                    val conn = dbHelper.getConnection()
-                    conn?.use { connection ->
-                        val query = "UPDATE colecciones SET nombre = ?, id_juego = ?, publica = ? WHERE id_coleccion = ?"
-                        val stmt = connection.prepareStatement(query)
-                        stmt.setString(1, nombre)
-                        stmt.setInt(2, idJuego)
-                        stmt.setInt(3, if (isPublic) 1 else 0)
-                        stmt.setInt(4, idColeccion)
-                        stmt.executeUpdate() > 0
-                    } ?: false
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    false
-                }
+                coleccionProvider.updateColeccion(idColeccion, coleccion, usuario, juegoSeleccionado)
             }
 
-            if (result) {
+            result.onSuccess {
                 _uiState.value = ColeccionUiState.ActionSuccess
-            } else {
-                _uiState.value = ColeccionUiState.Error("ACTUALIZAR_ERROR")
+            }.onFailure { exception ->
+                _uiState.value = ColeccionUiState.Error(exception.message ?: "ACTUALIZAR_ERROR")
             }
         }
     }
