@@ -2,9 +2,11 @@ package es.cifpcarlos3.proyecto_mesus_android.data.remote
 
 import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.CartaDto
 import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.ColeccionDto
+import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.EventoDto
 import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.JuegoDto
 import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.UsuarioDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -14,6 +16,19 @@ interface MesusApi {
 
     @GET("api/juegos")
     suspend fun getJuegos(): List<JuegoDto>
+
+    // Eventos
+    @GET("api/eventos")
+    suspend fun getEventos(): List<EventoDto>
+
+    @GET("api/eventos/usuario/{idUsuario}")
+    suspend fun getEventosByUsuario(@Path("idUsuario") idUsuario: Int): List<EventoDto>
+
+    @DELETE("api/eventos/{id}")
+    suspend fun deleteEvento(@Path("id") id: Int)
+
+    @POST("api/eventos")
+    suspend fun createEvento(@Body evento: EventoDto): EventoDto
 
     @GET("api/usuarios/buscar/{nombre}")
     suspend fun searchUsuarios(@Path("nombre") nombre: String): List<UsuarioDto>
@@ -33,6 +48,9 @@ interface MesusApi {
     @PUT("api/colecciones/{id}")
     suspend fun updateColeccion(@Path("id") id: Int, @Body coleccion: ColeccionDto): ColeccionDto
 
+    @DELETE("api/colecciones/{id}")
+    suspend fun deleteColeccion(@Path("id") id: Int)
+
     @GET("api/cartas/coleccion/{idColeccion}")
     suspend fun getCartasByColeccion(@Path("idColeccion") idColeccion: Int): List<CartaDto>
 
@@ -41,4 +59,7 @@ interface MesusApi {
 
     @PUT("api/cartas/{id}")
     suspend fun updateCarta(@Path("id") id: Int, @Body carta: CartaDto): CartaDto
+
+    @DELETE("api/cartas/{id}")
+    suspend fun deleteCarta(@Path("id") id: Int)
 }

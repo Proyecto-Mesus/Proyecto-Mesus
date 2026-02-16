@@ -2,14 +2,13 @@ package es.cifpcarlos3.proyecto_mesus_android.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import es.cifpcarlos3.proyecto_mesus_android.data.db.DatabaseHelper
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Evento
-import kotlinx.coroutines.Dispatchers
+import es.cifpcarlos3.proyecto_mesus_android.data.remote.RetrofitInstance
+import es.cifpcarlos3.proyecto_mesus_android.data.repository.EventoProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.sql.ResultSet
 
 sealed class EventoUiState {
     object Idle : EventoUiState()
@@ -20,7 +19,7 @@ sealed class EventoUiState {
 }
 
 class EventsViewModel : ViewModel() {
-    private val dbHelper = DatabaseHelper()
+    private val provider = EventoProvider(RetrofitInstance.api)
     private val _uiState = MutableStateFlow<EventoUiState>(EventoUiState.Idle)
     val uiState: StateFlow<EventoUiState> = _uiState.asStateFlow()
 
@@ -32,62 +31,38 @@ class EventsViewModel : ViewModel() {
     }
 
     fun fetchEvents() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _uiState.value = EventoUiState.Loading
-            try {
-                dbHelper.getConnection().use { conn ->
-                    val query = "SELECT * FROM eventos"
-                    conn.prepareStatement(query).use { stmt ->
-                        val rs: ResultSet = stmt.executeQuery()
-                        val events = mutableListOf<Evento>()
-                        while (rs.next()) {
-                            events.add(
-                                Evento(
-                                    rs.getInt("id_evento"),
-                                    rs.getString("nombre"),
-                                    rs.getString("descripcion"),
-                                    rs.getString("fecha"),
-                                    rs.getDouble("latitud"),
-                                    rs.getDouble("longitud")
-                                )
-                            )
-                        }
-                        _uiState.value = EventoUiState.Success(events)
-                    }
-                }
-            } catch (e: Exception) {
-                _uiState.value = EventoUiState.Error(e.message ?: "Error desconocido")
+            val result = provider.getEventos()
+            result.onSuccess {
+                _uiState.value = EventoUiState.Success(it)
+            }.onFailure {
+                _uiState.value = EventoUiState.Error(it.message ?: "Error desconocido")
             }
         }
     }
 
     fun fetchMyEvents(userId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _uiState.value = EventoUiState.Loading
-            try {
-                dbHelper.getConnection().use { conn ->
-                    val query = "SELECT * FROM eventos WHERE id_usuario = ?"
-                    conn.prepareStatement(query).use { stmt ->
-                        stmt.setInt(1, userId)
-                        val rs: ResultSet = stmt.executeQuery()
-                        val events = mutableListOf<Evento>()
-                        while (rs.next()) {
-                            events.add(
-                                Evento(
-                                    rs.getInt("id_evento"),
-                                    rs.getString("nombre"),
-                                    rs.getString("descripcion"),
-                                    rs.getString("fecha"),
-                                    rs.getDouble("latitud"),
-                                    rs.getDouble("longitud")
-                                )
-                            )
-                        }
-                        _uiState.value = EventoUiState.Success(events)
-                    }
-                }
-            } catch (e: Exception) {
-                _uiState.value = EventoUiState.Error(e.message ?: "Error desconocido")
+            val result = provider.getEventosByUsuario(userId)
+            result.onSuccess {
+                _uiState.value = EventoUiState.Success(it)
+            }.onFailure {
+                _uiState.value = EventoUiState.Error(it.message ?: "Error desconocido")
+            }
+        }
+    }
+    
+    fun deleteEvento(id: Int) {
+        viewModelScope.launch {
+            _uiState.value = EventoUiState.Loading
+            val result = provider.deleteEvento(id)
+            result.onSuccess {
+                _uiState.value = EventoUiState.ActionSuccess
+                fetchEvents()
+            }.onFailure {
+                _uiState.value = EventoUiState.Error(it.message ?: "Error al borrar")
             }
         }
     }

@@ -15,6 +15,19 @@ class UsuarioProvider(private val api: MesusApi) {
         }
     }
 
+    suspend fun registerUsuario(username: String, email: String, password: String): Result<Usuario> {
+        return try {
+            val userDto = es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.UsuarioDto(
+                id = 0,
+                nombreUsuario = username
+            )
+            val response = api.registerUsuario(userDto)
+            Result.success(response.toDomain())
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun searchUsuarios(query: String): Result<List<Usuario>> {
         return try {
             val response = api.searchUsuarios(query)

@@ -51,4 +51,13 @@ class ColeccionProvider(private val api: MesusApi) {
             Result.failure(e)
         }
     }
+
+    suspend fun deleteColeccion(id: Int): Result<Unit> {
+        return try {
+            api.deleteColeccion(id)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

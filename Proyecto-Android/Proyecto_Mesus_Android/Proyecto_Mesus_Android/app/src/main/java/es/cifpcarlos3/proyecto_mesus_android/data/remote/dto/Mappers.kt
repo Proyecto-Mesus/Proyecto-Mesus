@@ -12,6 +12,17 @@ fun UsuarioDto.toDomain(): Usuario {
     )
 }
 
+fun EventoDto.toDomain(): es.cifpcarlos3.proyecto_mesus_android.data.models.Evento {
+    return es.cifpcarlos3.proyecto_mesus_android.data.models.Evento(
+        idEvento = id,
+        nombre = nombre,
+        descripcion = descripcion,
+        fecha = fecha,
+        latitud = latitud,
+        longitud = longitud
+    )
+}
+
 fun JuegoDto.toDomain(): Juego {
     return Juego(
         idJuego = id,

@@ -1,15 +1,15 @@
 package es.cifpcarlos3.proyecto_mesus_android.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import es.cifpcarlos3.proyecto_mesus_android.data.db.DatabaseHelper
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Carta
-import kotlinx.coroutines.Dispatchers
+import es.cifpcarlos3.proyecto_mesus_android.data.remote.RetrofitInstance
+import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.CartaDto
+import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.toDomain
+import es.cifpcarlos3.proyecto_mesus_android.data.repository.CartaProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 sealed class CartaUiState {
     object Idle : CartaUiState()
@@ -19,9 +19,8 @@ sealed class CartaUiState {
     data class Error(val message: String) : CartaUiState()
 }
 
-class CollectionDetailViewModel(application: Application) : AndroidViewModel(application) {
-    private val dbHelper = DatabaseHelper()
-
+class CollectionDetailViewModel : ViewModel() {
+    private val provider = CartaProvider(RetrofitInstance.api)
     private val _uiState = MutableStateFlow<CartaUiState>(CartaUiState.Idle)
     val uiState: StateFlow<CartaUiState> = _uiState
 
@@ -32,66 +31,30 @@ class CollectionDetailViewModel(application: Application) : AndroidViewModel(app
         _isGridView.value = !_isGridView.value
     }
 
-    fun getCartas(collectionId: Int) {
+    fun getCartas(idColeccion: Int) {
+        _uiState.value = CartaUiState.Loading
         viewModelScope.launch {
-            _uiState.value = CartaUiState.Loading
-            val resultado = withContext(Dispatchers.IO) {
-                var list = emptyList<Carta>()
-                var owner = -1
-                try {
-                    val conn = dbHelper.getConnection()
-                    conn?.use { c ->
-                        val query =
-                            "SELECT id_carta, nombre, `set`, numero_set, imagen FROM cartas WHERE id_coleccion = ?"
-                        val stmt = c.prepareStatement(query)
-                        stmt.setInt(1, collectionId)
-                        val rs = stmt.executeQuery()
-                        val lista = mutableListOf<Carta>()
-                        while (rs.next()) {
-                            lista.add(
-                                Carta(
-                                    idCarta = rs.getInt("id_carta"),
-                                    nombre = rs.getString("nombre"),
-                                    set = rs.getString("set"),
-                                    numeroSet = rs.getString("numero_set"),
-                                    imagen = rs.getString("imagen"),
-                                    idColeccion = collectionId
-                                )
-                            )
-                        }
-                        list = lista
-                        
-                        val ownerQuery = "SELECT id_usuario FROM colecciones WHERE id_coleccion = ?"
-                        val ownerStmt = c.prepareStatement(ownerQuery)
-                        ownerStmt.setInt(1, collectionId)
-                        val ownerRs = ownerStmt.executeQuery()
-                        if (ownerRs.next()) {
-                            owner = ownerRs.getInt("id_usuario")
-                        }
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                Pair(list, owner)
+            val response = RetrofitInstance.api.getCartasByColeccion(idColeccion)
+            try {
+                val cards = response.map { it.toDomain() }
+                val ownerId = response.firstOrNull()?.coleccion?.usuario?.id ?: -1
+                _uiState.value = CartaUiState.Success(cards, ownerId)
+            } catch (e: Exception) {
+                _uiState.value = CartaUiState.Error(e.message ?: "LOAD_FAILED")
             }
-            _uiState.value = CartaUiState.Success(resultado.first, resultado.second)
         }
     }
 
-    fun deleteCarta(cardId: Int, collectionId: Int) {
+    fun deleteCard(cardId: Int, idColeccion: Int) {
+        _uiState.value = CartaUiState.Loading
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    dbHelper.getConnection()?.use { conn ->
-                        val stmt = conn.prepareStatement("DELETE FROM cartas WHERE id_carta = ?")
-                        stmt.setInt(1, cardId)
-                        stmt.executeUpdate()
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+            val result = provider.deleteCarta(cardId)
+            result.onSuccess {
+                _uiState.value = CartaUiState.ActionSuccess
+                getCartas(idColeccion)
+            }.onFailure {
+                _uiState.value = CartaUiState.Error(it.message ?: "DELETE_FAILED")
             }
-            getCartas(collectionId)
         }
     }
 }

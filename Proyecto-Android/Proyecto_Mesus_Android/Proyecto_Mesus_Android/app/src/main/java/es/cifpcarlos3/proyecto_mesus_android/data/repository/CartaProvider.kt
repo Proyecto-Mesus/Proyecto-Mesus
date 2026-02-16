@@ -71,4 +71,13 @@ class CartaProvider(private val api: MesusApi) {
             Result.failure(e)
         }
     }
+
+    suspend fun deleteCarta(id: Int): Result<Unit> {
+        return try {
+            api.deleteCarta(id)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

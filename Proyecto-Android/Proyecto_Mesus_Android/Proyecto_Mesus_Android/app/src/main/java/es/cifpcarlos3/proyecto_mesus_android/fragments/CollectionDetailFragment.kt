@@ -82,7 +82,7 @@ class CollectionDetailFragment : Fragment(), ViewTogglable {
                                 .setTitle(getString(R.string.eliminarCarta))
                                 .setMessage(getString(R.string.confirmarEliminarCarta, card.nombre))
                                 .setPositiveButton(getString(R.string.eliminar)) { _, _ ->
-                                    viewModel.deleteCarta(card.idCarta, collectionId)
+                                    viewModel.deleteCard(card.idCarta, collectionId)
                                     Snackbar.make(binding.root, getString(R.string.cartaEliminada), Snackbar.LENGTH_SHORT).show()
                                 }
                                 .setNegativeButton(getString(R.string.cancelar), null)
