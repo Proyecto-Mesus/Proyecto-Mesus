@@ -37,7 +37,7 @@ public class EventoController {
     //añadir un evento
     @PostMapping
     public ResponseEntity<Evento> createEvento(@RequestBody Evento evento) {
-        return ResponseEntity.status(301).body(eventoRepository.save(evento));
+        return ResponseEntity.status(201).body(eventoRepository.save(evento));
     }
 
     //añadir un usuario a un evento
@@ -93,7 +93,7 @@ public class EventoController {
 
     //borra un evento
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteEvento(@PathVariable int id) {
+    public ResponseEntity<?> deleteEvento(@PathVariable int id) {
         return eventoRepository.findById(id)
                 .map(evento -> {
 

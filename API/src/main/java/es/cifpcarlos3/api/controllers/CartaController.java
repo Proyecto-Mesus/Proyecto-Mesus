@@ -26,12 +26,12 @@ public class CartaController {
     //añadir una colección
     @PostMapping
     public ResponseEntity<Carta> createCarta(@RequestBody Carta carta) {
-        return ResponseEntity.status(301).body(cartaRepository.save(carta));
+        return ResponseEntity.status(201).body(cartaRepository.save(carta));
     }
 
     //borrar una carta
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteCarta(@PathVariable int id) {
+    public ResponseEntity<?> deleteCarta(@PathVariable int id) {
         return cartaRepository.findById(id)
                 .map(carta -> {
                     cartaRepository.deleteById(id);

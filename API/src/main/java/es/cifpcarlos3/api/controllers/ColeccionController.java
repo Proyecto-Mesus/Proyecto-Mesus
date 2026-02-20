@@ -52,12 +52,12 @@ public class ColeccionController {
     //añadir una colección
     @PostMapping
     public ResponseEntity<Coleccion> createColeccion(@RequestBody Coleccion coleccion) {
-        return ResponseEntity.status(301).body(coleccionRepository.save(coleccion));
+        return ResponseEntity.status(201).body(coleccionRepository.save(coleccion));
     }
 
     //borrar una colección
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteColeccion(@PathVariable int id) {
+    public ResponseEntity<?> deleteColeccion(@PathVariable int id) {
         return coleccionRepository.findById(id)
                 .map(coleccion -> {
                     coleccionRepository.deleteById(id);

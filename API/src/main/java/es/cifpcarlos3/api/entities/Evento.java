@@ -50,4 +50,8 @@ public class Evento {
     )
     private List<Usuario> usuarios;
 
+    @JsonIgnore
+    @OneToOne(mappedBy = "evento", cascade = CascadeType.ALL)
+    private ChatEvento chatEvento;
+
 }

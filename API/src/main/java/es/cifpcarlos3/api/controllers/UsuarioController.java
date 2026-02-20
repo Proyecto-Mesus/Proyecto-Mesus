@@ -27,7 +27,7 @@ public class UsuarioController {
     //añadir un usuario
     @PostMapping
     public ResponseEntity<Usuario> createUsuario(@Valid @RequestBody Usuario usuario) {
-        return ResponseEntity.status(301).body(usuarioRepository.save(usuario));
+        return ResponseEntity.status(201).body(usuarioRepository.save(usuario));
     }
 
     //verifica el login
