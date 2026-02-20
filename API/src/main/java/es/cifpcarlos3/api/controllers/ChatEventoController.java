@@ -2,6 +2,7 @@ package es.cifpcarlos3.api.controllers;
 
 import es.cifpcarlos3.api.entities.ChatEvento;
 import es.cifpcarlos3.api.entities.Evento;
+import es.cifpcarlos3.api.entities.Usuario;
 import es.cifpcarlos3.api.repositories.ChatEventoRepository;
 import es.cifpcarlos3.api.repositories.EventoRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,14 @@ public class ChatEventoController {
     ChatEventoRepository chatEventoRepository;
     @Autowired
     EventoRepository eventoRepository;
+
+    //obtener por id
+    @GetMapping("/{id}")
+    public ResponseEntity<ChatEvento> findChatById(@PathVariable int id) {
+        return chatEventoRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
     //obtiene el chat de un evento
     @GetMapping("/evento/{idEvento}")

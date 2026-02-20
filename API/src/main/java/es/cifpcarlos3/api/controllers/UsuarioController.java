@@ -17,9 +17,17 @@ public class UsuarioController {
     @Autowired
     UsuarioRepository usuarioRepository;
 
+    //obtener por id
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> findUsuarioById(@PathVariable int id) {
+        return usuarioRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     //obtener un usuario por su nombre
     @GetMapping("/buscar/{nombre}")
-    public ResponseEntity<?> findUsuariosByNombre(@PathVariable String nombre) {
+    public ResponseEntity<List<UsuarioSinContrasenaDTO>> findUsuariosByNombre(@PathVariable String nombre) {
         List<UsuarioSinContrasenaDTO> usuarios = usuarioRepository.obtenerUsuariosSinContrasenaPorNombreUsuario(nombre);
         return ResponseEntity.ok(usuarios);
     }

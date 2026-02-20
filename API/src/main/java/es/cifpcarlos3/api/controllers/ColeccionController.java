@@ -19,6 +19,14 @@ public class ColeccionController {
     @Autowired
     ColeccionRepository coleccionRepository;
 
+    //obtener por id
+    @GetMapping("/{id}")
+    public ResponseEntity<Coleccion> findColeccionById(@PathVariable int id) {
+        return coleccionRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     //obtener colecciones por id de usuario
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<List<Coleccion>> findColeccionesByUsuarioId(@PathVariable int idUsuario) {
@@ -28,7 +36,7 @@ public class ColeccionController {
 
     //obtener colecciones por id de usuario, solo las públicas
     @GetMapping("/publicas/usuario/{idUsuario}")
-    public ResponseEntity<?> findColeccionesPublicasByUsuarioId(@PathVariable int idUsuario) {
+    public ResponseEntity<List<ColeccionSinContrasenaDTO>> findColeccionesPublicasByUsuarioId(@PathVariable int idUsuario) {
         List<Coleccion> colecciones = coleccionRepository.findByUsuarioIdAndPublicaTrue(idUsuario);
 
         List<ColeccionSinContrasenaDTO> coleccionesDTO = colecciones.stream()

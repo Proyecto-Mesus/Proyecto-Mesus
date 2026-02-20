@@ -54,4 +54,9 @@ public class Evento {
     @OneToOne(mappedBy = "evento", cascade = CascadeType.ALL)
     private ChatEvento chatEvento;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "id_creador", nullable = false)
+    private Usuario creador;
+
 }

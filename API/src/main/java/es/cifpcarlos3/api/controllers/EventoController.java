@@ -1,8 +1,10 @@
 package es.cifpcarlos3.api.controllers;
 
+import es.cifpcarlos3.api.dto.EventoSinContrasenaDTO;
 import es.cifpcarlos3.api.entities.Carta;
 import es.cifpcarlos3.api.entities.Evento;
 import es.cifpcarlos3.api.entities.Usuario;
+import es.cifpcarlos3.api.mapper.EventoSinContrasenaMapper;
 import es.cifpcarlos3.api.repositories.EventoRepository;
 import es.cifpcarlos3.api.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +22,37 @@ public class EventoController {
     EventoRepository eventoRepository;
     @Autowired
     UsuarioRepository usuarioRepository;
+    @Autowired
+    EventoSinContrasenaMapper eventoMapper;
+
+    //obtener por id
+    @GetMapping("/{id}")
+    public ResponseEntity<Evento> findEventoById(@PathVariable int id) {
+        return eventoRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
     //obtener todos los eventos
     @GetMapping
-    public ResponseEntity<List<Evento>> findAllEventos() {
-        return ResponseEntity.ok(eventoRepository.findAll());
+    public ResponseEntity<List<EventoSinContrasenaDTO>> findAllEventos() {
+        List<EventoSinContrasenaDTO> eventosDTO = eventoRepository.findAll()
+                .stream()
+                .map(eventoMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(eventosDTO);
     }
 
+
     //obtener todos los eventos de un usuario
-    @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<List<Evento>> findEventosByIdUsuario(@PathVariable int idUsuario) {
-        List<Evento> eventos = eventoRepository.findEventosByUsuarios_Id(idUsuario);
-        return ResponseEntity.ok(eventos);
+    public ResponseEntity<List<EventoSinContrasenaDTO>> findEventosByIdUsuario(@PathVariable int idUsuario) {
+        List<EventoSinContrasenaDTO> eventosDTO = eventoRepository.findEventosByUsuarios_Id(idUsuario)
+                .stream()
+                .map(eventoMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(eventosDTO);
     }
+
 
     //añadir un evento
     @PostMapping

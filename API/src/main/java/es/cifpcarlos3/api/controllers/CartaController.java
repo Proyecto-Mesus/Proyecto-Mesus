@@ -2,6 +2,7 @@ package es.cifpcarlos3.api.controllers;
 
 import es.cifpcarlos3.api.entities.Carta;
 import es.cifpcarlos3.api.entities.Coleccion;
+import es.cifpcarlos3.api.entities.Usuario;
 import es.cifpcarlos3.api.repositories.CartaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,14 @@ import java.util.Optional;
 public class CartaController {
     @Autowired
     CartaRepository cartaRepository;
+
+    //obtener por id
+    @GetMapping("/{id}")
+    public ResponseEntity<Carta> findCartaById(@PathVariable int id) {
+        return cartaRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
     //obtener cartas de una colección
     @GetMapping("/coleccion/{idColeccion}")

@@ -39,4 +39,8 @@ public class Usuario {
     @JsonIgnore
     @ManyToMany(mappedBy = "usuarios")
     private List<Evento> eventos;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "creador")
+    private List<Evento> eventosCreados;
 }
