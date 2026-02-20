@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import es.cifpcarlos3.proyecto_mesus_android.data.db.DatabaseHelper
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Juego
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Usuario

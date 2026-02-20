@@ -2,7 +2,6 @@ package es.cifpcarlos3.proyecto_mesus_android.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import es.cifpcarlos3.proyecto_mesus_android.data.db.DatabaseHelper
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Carta
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Juego
