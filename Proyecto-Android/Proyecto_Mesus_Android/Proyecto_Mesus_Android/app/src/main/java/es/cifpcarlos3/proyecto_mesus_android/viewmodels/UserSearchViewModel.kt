@@ -3,8 +3,7 @@ package es.cifpcarlos3.proyecto_mesus_android.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import es.cifpcarlos3.proyecto_mesus_android.data.models.Usuario
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.RetrofitInstance
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.RetrofitInstance
 import es.cifpcarlos3.proyecto_mesus_android.data.repository.UsuarioProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

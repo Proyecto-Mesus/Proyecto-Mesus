@@ -3,7 +3,7 @@ package es.cifpcarlos3.proyecto_mesus_android.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Evento
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.RetrofitInstance
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.RetrofitInstance
 import es.cifpcarlos3.proyecto_mesus_android.data.repository.EventoProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -63,6 +63,18 @@ class EventsViewModel : ViewModel() {
                 fetchEvents()
             }.onFailure {
                 _uiState.value = EventoUiState.Error(it.message ?: "Error al borrar")
+            }
+        }
+    }
+
+    fun updateEvento(id: Int, evento: es.cifpcarlos3.proyecto_mesus_android.data.models.Evento, userId: Int) {
+        viewModelScope.launch {
+            _uiState.value = EventoUiState.Loading
+            val result = provider.updateEvento(id, evento, userId)
+            result.onSuccess {
+                _uiState.value = EventoUiState.ActionSuccess
+            }.onFailure {
+                _uiState.value = EventoUiState.Error(it.message ?: "Error al actualizar")
             }
         }
     }

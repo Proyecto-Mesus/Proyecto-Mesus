@@ -1,6 +1,7 @@
 package es.cifpcarlos3.proyecto_mesus_android.fragments
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ import es.cifpcarlos3.proyecto_mesus_android.viewmodels.CartaUiState
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
@@ -45,25 +47,27 @@ class CollectionDetailFragment : Fragment(), ViewTogglable {
         savedInstanceState: Bundle?
     ): View {
         binding = CollectionDetailFragmentBinding.inflate(inflater, container, false)
-        collectionId = arguments?.getInt("collectionId") ?: -1
-        currentCollection = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getSerializable("coleccion", Coleccion::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            arguments?.getSerializable("coleccion") as? Coleccion
-        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        collectionId = arguments?.getInt("collectionId") ?: -1
+        currentCollection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getSerializable("coleccion", Coleccion::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getSerializable("coleccion") as? Coleccion
+        }
+
+
         adapter = CardAdapter(emptyList()) { card, cardView ->
             val userId = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE).getInt("userId", -1)
             
             val currentState = viewModel.uiState.value
             if (currentState is CartaUiState.Success && currentState.ownerId == userId) {
-                val popup = androidx.appcompat.widget.PopupMenu(requireContext(), cardView)
+                val popup = PopupMenu(requireContext(), cardView)
                 popup.menuInflater.inflate(R.menu.menu_context_item, popup.menu)
                 
                 popup.setOnMenuItemClickListener { item ->
@@ -147,9 +151,7 @@ class CollectionDetailFragment : Fragment(), ViewTogglable {
 
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-
             }
-
             override fun onPrepareMenu(menu: Menu) {
                 val searchItem = menu.findItem(R.id.action_search)
                 val searchView = searchItem?.actionView as? SearchView
@@ -163,7 +165,6 @@ class CollectionDetailFragment : Fragment(), ViewTogglable {
                     }
                 })
             }
-
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return false
             }

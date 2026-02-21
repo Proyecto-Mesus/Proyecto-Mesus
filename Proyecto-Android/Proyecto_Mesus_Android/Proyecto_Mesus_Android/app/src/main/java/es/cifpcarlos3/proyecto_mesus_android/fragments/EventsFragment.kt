@@ -43,17 +43,6 @@ class EventsFragment : Fragment(), OnMapReadyCallback, ViewTogglable {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        observeViewModel()
-        viewModel.fetchEvents()
-    }
-
-
-    override fun toggleView() {
-        viewModel.toggleViewMode()
-        requireActivity().invalidateOptionsMenu()
-    }
-
-    private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -61,7 +50,7 @@ class EventsFragment : Fragment(), OnMapReadyCallback, ViewTogglable {
                         if (isListMode) {
                             binding.mapContainer.visibility = View.GONE
                             binding.listContainer.visibility = View.VISIBLE
-                            
+
                             if (childFragmentManager.findFragmentByTag("events_tabs") == null) {
                                 childFragmentManager.beginTransaction()
                                     .replace(R.id.listContainer, EventsTabFragment(), "events_tabs")
@@ -74,42 +63,54 @@ class EventsFragment : Fragment(), OnMapReadyCallback, ViewTogglable {
                         requireActivity().invalidateOptionsMenu()
                     }
                 }
-                
+
                 launch {
                     viewModel.uiState.collect { state ->
-                    when (state) {
-                        is EventoUiState.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
-                        }
-                        is EventoUiState.Success -> {
-                            binding.progressBar.visibility = View.GONE
-                            googleMap?.clear()
-                            state.list.forEach { evento ->
-                                val pos = LatLng(evento.latitud, evento.longitud)
-                                googleMap?.addMarker(
-                                    MarkerOptions().position(pos).title(evento.nombre)
-                                )
+                        when (state) {
+                            is EventoUiState.Loading -> {
+                                binding.progressBar.visibility = View.VISIBLE
                             }
-                            if (state.list.isNotEmpty()) {
-                                val firstEvent = LatLng(state.list[0].latitud, state.list[0].longitud)
-                                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(firstEvent, 10f))
+                            is EventoUiState.Success -> {
+                                binding.progressBar.visibility = View.GONE
+                                googleMap?.clear()
+                                state.list.forEach { evento ->
+                                    val pos = LatLng(evento.latitud, evento.longitud)
+                                    googleMap?.addMarker(
+                                        MarkerOptions().position(pos).title(evento.nombre)
+                                    )
+                                }
+                                if (state.list.isNotEmpty()) {
+                                    val firstEvent = LatLng(state.list[0].latitud, state.list[0].longitud)
+                                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(firstEvent, 10f))
+                                }
                             }
+                            is EventoUiState.Error -> {
+                                binding.progressBar.visibility = View.GONE
+                                Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
+                            }
+                            else -> {}
                         }
-                        is EventoUiState.Error -> {
-                            binding.progressBar.visibility = View.GONE
-                            Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
-                        }
-                        else -> {}
-                    }
                     }
                 }
             }
         }
+        viewModel.fetchEvents()
     }
+
+
+    override fun toggleView() {
+        viewModel.toggleViewMode()
+        requireActivity().invalidateOptionsMenu()
+    }
+
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap?.uiSettings?.isZoomControlsEnabled = true
+        
+        // Ubicación por defecto (España)
+        val defaultLoc = LatLng(40.416775, -3.703790)
+        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLoc, 13f))
         
         val currentState = viewModel.uiState.value
         if (currentState is EventoUiState.Success) {

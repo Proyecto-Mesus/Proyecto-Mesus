@@ -17,9 +17,20 @@ import es.cifpcarlos3.proyecto_mesus_android.R
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Evento
 import es.cifpcarlos3.proyecto_mesus_android.databinding.FragmentEventDetailBinding
 
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
+import es.cifpcarlos3.proyecto_mesus_android.viewmodels.EventDetailViewModel
+import es.cifpcarlos3.proyecto_mesus_android.viewmodels.EventDetailUiState
+import kotlinx.coroutines.launch
+
 class EventDetailFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var binding: FragmentEventDetailBinding
+    private val viewModel: EventDetailViewModel by viewModels()
     private var evento: Evento? = null
     private var googleMap: GoogleMap? = null
 
@@ -41,12 +52,43 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
             arguments?.getSerializable("evento") as? Evento
         }
 
-        evento?.let {
-            binding.tvDetailEventName.text = it.nombre
-            binding.tvDetailEventDate.text = it.fecha
-            binding.tvDetailEventDescription.text = it.descripcion
+        evento?.let { currentEvento ->
+            binding.tvDetailEventName.text = currentEvento.nombre
+            binding.tvDetailEventDate.text = currentEvento.fecha
+            binding.tvDetailEventDescription.text = currentEvento.descripcion
+            
+            binding.btnOpenChat.setOnClickListener {
+                viewModel.openOrCreateChat(currentEvento.idEvento)
+            }
         }
-        binding.progressBarDetail.visibility = View.VISIBLE
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    when (state) {
+                        is EventDetailUiState.Loading -> {
+                            binding.progressBarDetail.visibility = View.VISIBLE
+                        }
+                        is EventDetailUiState.ChatReady -> {
+                            binding.progressBarDetail.visibility = View.GONE
+                            viewModel.resetState()
+                            val bundle = Bundle().apply {
+                                putSerializable("conversacion", state.conversacion)
+                            }
+                            findNavController().navigate(R.id.chatDetailFragment, bundle)
+                        }
+                        is EventDetailUiState.Error -> {
+                            binding.progressBarDetail.visibility = View.GONE
+                            Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
+                        }
+                        else -> {
+                            binding.progressBarDetail.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+        }
+
         val mapFragment = childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
     }
@@ -62,7 +104,7 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
                     .position(location)
                     .title(it.nombre)
             )
-            googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
+            googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17f))
         }
     }
 }

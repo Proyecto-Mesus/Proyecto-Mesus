@@ -63,7 +63,21 @@
         android:id="@+id/chatListFragment"
         android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.ChatFragment"
         android:label="Chats"
-        app:layout="@layout/chat_fragment" />
+        app:layout="@layout/chat_fragment">
+        <action
+            android:id="@+id/action_chatListFragment_to_chatDetailFragment"
+            app:destination="@id/chatDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/chatDetailFragment"
+        android:name="es.cifpcarlos3.proyecto_mesus_android.fragments.ChatDetailFragment"
+        android:label="Chat"
+        app:layout="@layout/chat_detail_fragment">
+        <argument
+            android:name="conversacion"
+            app:argType="es.cifpcarlos3.proyecto_mesus_android.data.models.Conversacion" />
+    </fragment>
 
     <fragment
         android:id="@+id/addCardFragment"

@@ -6,7 +6,7 @@ import es.cifpcarlos3.proyecto_mesus_android.data.models.Carta
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Juego
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Usuario
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.RetrofitInstance
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.RetrofitInstance
 import es.cifpcarlos3.proyecto_mesus_android.data.repository.CartaProvider
 import es.cifpcarlos3.proyecto_mesus_android.data.repository.JuegoProvider
 import es.cifpcarlos3.proyecto_mesus_android.data.utils.CloudinaryHelper

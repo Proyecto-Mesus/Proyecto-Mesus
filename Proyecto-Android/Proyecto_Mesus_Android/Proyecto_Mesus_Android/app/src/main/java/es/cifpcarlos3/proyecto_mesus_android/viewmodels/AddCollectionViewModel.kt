@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Juego
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Usuario
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.RetrofitInstance
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.RetrofitInstance
 import es.cifpcarlos3.proyecto_mesus_android.data.repository.ColeccionProvider
 import es.cifpcarlos3.proyecto_mesus_android.data.repository.JuegoProvider
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +34,7 @@ class AddCollectionViewModel(application: Application) : AndroidViewModel(applic
     private val _juegosState = MutableStateFlow<JuegoUiState>(JuegoUiState.Idle)
     val juegosState: StateFlow<JuegoUiState> = _juegosState
 
-    fun fetchJuegos() {
+    fun obtenerJuegos() {
         _juegosState.value = JuegoUiState.Loading
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {

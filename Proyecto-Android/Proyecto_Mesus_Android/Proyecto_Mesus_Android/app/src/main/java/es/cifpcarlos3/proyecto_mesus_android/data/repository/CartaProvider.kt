@@ -4,12 +4,12 @@ import es.cifpcarlos3.proyecto_mesus_android.data.models.Carta
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Juego
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Usuario
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.MesusApi
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.CartaDto
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.ColeccionDto
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.JuegoDto
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.UsuarioDto
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.toDomain
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.MesusApi
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.CartaDto
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.ColeccionDto
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.JuegoDto
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.UsuarioDto
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.toDomain
 
 class CartaProvider(private val api: MesusApi) {
 

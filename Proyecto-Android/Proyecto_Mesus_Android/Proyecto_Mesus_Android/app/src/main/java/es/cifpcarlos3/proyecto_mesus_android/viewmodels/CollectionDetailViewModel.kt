@@ -3,9 +3,8 @@ package es.cifpcarlos3.proyecto_mesus_android.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Carta
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.RetrofitInstance
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.CartaDto
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.toDomain
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.RetrofitInstance
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.toDomain
 import es.cifpcarlos3.proyecto_mesus_android.data.repository.CartaProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

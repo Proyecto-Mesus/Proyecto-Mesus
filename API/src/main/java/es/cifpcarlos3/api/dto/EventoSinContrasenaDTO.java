@@ -14,8 +14,8 @@ public class EventoSinContrasenaDTO {
     private int id;
     private String nombre;
     private String descripcion;
-    private Float latitud;
-    private Float longitud;
+    private Double latitud;
+    private Double longitud;
     private LocalDateTime fecha;
 
     private UsuarioSinContrasenaDTO creador;

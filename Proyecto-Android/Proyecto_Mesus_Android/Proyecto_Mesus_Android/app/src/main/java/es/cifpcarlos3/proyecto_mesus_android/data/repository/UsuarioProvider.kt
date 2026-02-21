@@ -1,8 +1,9 @@
 package es.cifpcarlos3.proyecto_mesus_android.data.repository
 
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Usuario
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.MesusApi
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.toDomain
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.MesusApi
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.UsuarioDto
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.toDomain
 
 class UsuarioProvider(private val api: MesusApi) {
 
@@ -17,7 +18,7 @@ class UsuarioProvider(private val api: MesusApi) {
 
     suspend fun registerUsuario(username: String, email: String, password: String): Result<Usuario> {
         return try {
-            val userDto = es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.UsuarioDto(
+            val userDto = UsuarioDto(
                 id = 0,
                 nombreUsuario = username
             )
