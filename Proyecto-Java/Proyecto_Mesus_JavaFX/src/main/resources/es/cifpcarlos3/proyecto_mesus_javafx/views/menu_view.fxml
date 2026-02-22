@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane xmlns:fx="http://javafx.com/fxml" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.MenuController">
+    <tabs>
+        <Tab fx:id="tabMisColecciones" text="Mis Colecciones" closable="false"/>
+        <Tab fx:id="tabBuscarColecciones" text="Buscar Colecciones" closable="false"/>
+        <Tab fx:id="tabEventos" text="Eventos" closable="false"/>
+    </tabs>
+</TabPane>
+

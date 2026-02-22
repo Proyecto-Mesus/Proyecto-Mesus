@@ -18,7 +18,7 @@ public class Carta {
     @Column(nullable = false, length = 250)
     private String nombre;
 
-    @Column(name = "set", nullable = false, length = 250)
+    @Column(name = "nombre_set", nullable = false, length = 250)
     private String set;
 
     @Column(name = "numero_set", nullable = false, length = 250)
