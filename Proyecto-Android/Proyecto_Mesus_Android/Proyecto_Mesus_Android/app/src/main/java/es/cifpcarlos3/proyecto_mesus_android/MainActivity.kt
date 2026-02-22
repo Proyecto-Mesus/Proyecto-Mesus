@@ -146,6 +146,12 @@ class MainActivity : AppCompatActivity() {
                     toolbar.visibility = View.VISIBLE
                     drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 }
+                R.id.chatDetailFragment -> {
+                    bottomNavigationView.visibility = View.GONE
+                    fab.visibility = View.GONE
+                    toolbar.visibility = View.VISIBLE
+                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                }
                 R.id.collectionFragment -> {
                     val bundle = navController.currentBackStackEntry?.arguments
                     val username = bundle?.getString("username")
@@ -197,7 +203,8 @@ class MainActivity : AppCompatActivity() {
 
                 if (currentFragment is ViewTogglable) {
                     toggleItem?.isVisible = true
-                    searchItem?.isVisible = false
+                    val isEventListMode = (currentFragment as? es.cifpcarlos3.proyecto_mesus_android.fragments.EventsFragment)?.isListView() == true
+                    searchItem?.isVisible = isEventListMode
                 } else {
                     toggleItem?.isVisible = false
                     searchItem?.isVisible = destinationWithSearch()
@@ -225,6 +232,13 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val id = navHostFragment.navController.currentDestination?.id
         return id == R.id.collectionFragment || id == R.id.collectionDetailFragment || id == R.id.userSearchFragment
+    }
+
+    fun getSearchView(): androidx.appcompat.widget.SearchView? {
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        val menu = toolbar.menu ?: return null
+        val searchItem = menu.findItem(R.id.action_search) ?: return null
+        return searchItem.actionView as? androidx.appcompat.widget.SearchView
     }
 
     override fun onSupportNavigateUp(): Boolean {

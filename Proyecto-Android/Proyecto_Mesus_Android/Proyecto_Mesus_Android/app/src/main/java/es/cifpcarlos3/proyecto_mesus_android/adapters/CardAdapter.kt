@@ -10,6 +10,7 @@ import es.cifpcarlos3.proyecto_mesus_android.databinding.ItemCardBinding
 
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.ImageView
 import androidx.viewbinding.ViewBinding
 import es.cifpcarlos3.proyecto_mesus_android.databinding.ItemCardGridBinding
 
@@ -57,7 +58,7 @@ class CardAdapter(
         }
     }
 
-    private fun loadCardImage(imageView: android.widget.ImageView, url: String?) {
+    private fun loadCardImage(imageView: ImageView, url: String?) {
         Glide.with(imageView.context)
             .load(url)
             .placeholder(android.R.drawable.ic_menu_gallery)

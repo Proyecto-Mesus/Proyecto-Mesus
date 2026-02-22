@@ -5,7 +5,7 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.RetrofitInstance
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.RetrofitInstance
 import es.cifpcarlos3.proyecto_mesus_android.data.repository.ColeccionProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,11 +33,17 @@ class CollectionViewModel(application: Application) : AndroidViewModel(applicati
             return
         }
 
+        val isOwnProfile = targetUserId == -1 || targetUserId == currentUserId
         val userIdToQuery = if (targetUserId != -1) targetUserId else currentUserId
         
         _uiState.value = ColeccionUiState.Loading
         viewModelScope.launch {
-            val result = provider.getColecciones(userIdToQuery)
+            val result = if (isOwnProfile) {
+                provider.getColecciones(userIdToQuery)
+            } else {
+                provider.getColeccionesPublicas(userIdToQuery)
+            }
+            
             result.onSuccess {
                 _uiState.value = ColeccionUiState.Success(it)
             }.onFailure {

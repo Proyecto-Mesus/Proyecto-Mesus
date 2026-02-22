@@ -38,7 +38,7 @@ class AddCollectionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.fetchJuegos()
+        viewModel.obtenerJuegos()
 
         val collectionToEdit = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             arguments?.getSerializable("coleccion", es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion::class.java)

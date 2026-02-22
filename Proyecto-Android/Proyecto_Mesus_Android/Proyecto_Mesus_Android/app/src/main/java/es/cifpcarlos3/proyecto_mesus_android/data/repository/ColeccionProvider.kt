@@ -3,17 +3,26 @@ package es.cifpcarlos3.proyecto_mesus_android.data.repository
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Juego
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Usuario
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.MesusApi
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.ColeccionDto
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.JuegoDto
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.UsuarioDto
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.toDomain
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.MesusApi
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.ColeccionDto
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.JuegoDto
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.UsuarioDto
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.toDomain
 
 class ColeccionProvider(private val api: MesusApi) {
 
     suspend fun getColecciones(userId: Int): Result<List<Coleccion>> {
         return try {
             val response = api.getColeccionesByUsuario(userId)
+            Result.success(response.map { it.toDomain() })
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getColeccionesPublicas(userId: Int): Result<List<Coleccion>> {
+        return try {
+            val response = api.getColeccionesPublicasByUsuario(userId)
             Result.success(response.map { it.toDomain() })
         } catch (e: Exception) {
             Result.failure(e)

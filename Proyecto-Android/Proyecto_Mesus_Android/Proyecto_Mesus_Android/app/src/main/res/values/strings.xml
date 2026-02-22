@@ -72,4 +72,14 @@
 
     <string name="tab_all">Todos</string>
     <string name="tab_my_events">Mis Eventos</string>
+    <string name="no_hay_chats">No hay conversaciones activas</string>
+    <string name="chats">Chats</string>
+    <string name="escribe_un_mensaje">Escribe un mensaje...</string>
+    <string name="buscarEventoHint">Buscar evento...</string>
+    <string name="eliminarEvento">Eliminar Evento</string>
+    <string name="confirmarEliminarEvento">¿Seguro que quieres eliminar el evento \"%s\"?</string>
+    <string name="eventoEliminado">Evento eliminado</string>
+    <string name="editarEvento">Editar Evento</string>
+    <string name="actualizarEvento">Actualizar Evento</string>
+    <string name="eventoActualizado">Evento actualizado con éxito</string>
 </resources>

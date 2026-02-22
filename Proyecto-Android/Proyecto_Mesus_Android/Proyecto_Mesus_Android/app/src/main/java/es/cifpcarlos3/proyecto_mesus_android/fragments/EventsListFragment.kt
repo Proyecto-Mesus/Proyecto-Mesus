@@ -23,6 +23,7 @@ class EventsListFragment : Fragment() {
     private lateinit var binding: FragmentListBinding
     private val viewModel: EventsViewModel by viewModels()
     private var showOnlyMine: Boolean = false
+    private lateinit var adapter: EventAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +43,49 @@ class EventsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        
+        adapter = EventAdapter(
+            emptyList(),
+            onItemClick = { event ->
+                val bundle = Bundle().apply {
+                    putSerializable("evento", event)
+                }
+                findNavController().navigate(R.id.action_eventsFragment_to_eventDetailFragment, bundle)
+            },
+            onLongClick = { event, view ->
+                if (showOnlyMine) {
+                    val popup = androidx.appcompat.widget.PopupMenu(requireContext(), view)
+                    popup.menuInflater.inflate(R.menu.menu_context_item, popup.menu)
+                    
+                    popup.setOnMenuItemClickListener { item ->
+                        when(item.itemId) {
+                            R.id.action_edit -> {
+                                val bundle = Bundle().apply {
+                                    putSerializable("evento", event)
+                                }
+                                findNavController().navigate(R.id.addEventFragment, bundle)
+                                true
+                            }
+                            R.id.action_delete -> {
+                                com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                                    .setTitle(getString(R.string.eliminarEvento))
+                                    .setMessage(getString(R.string.confirmarEliminarEvento, event.nombre))
+                                    .setPositiveButton(getString(R.string.eliminar)) { _, _ ->
+                                        viewModel.deleteEvento(event.idEvento)
+                                        com.google.android.material.snackbar.Snackbar.make(binding.root, getString(R.string.eventoEliminado), com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
+                                    }
+                                    .setNegativeButton(getString(R.string.cancelar), null)
+                                    .show()
+                                true
+                            }
+                            else -> false
+                        }
+                    }
+                    popup.show()
+                }
+            }
+        )
+        binding.recyclerView.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -52,11 +96,15 @@ class EventsListFragment : Fragment() {
                         }
                         is EventoUiState.Success -> {
                             binding.progressBar.visibility = View.GONE
-                            binding.recyclerView.adapter = EventAdapter(state.list) { event ->
-                                val bundle = Bundle().apply {
-                                    putSerializable("evento", event)
-                                }
-                                findNavController().navigate(R.id.action_eventsFragment_to_eventDetailFragment, bundle)
+                            adapter.updateList(state.list)
+                        }
+                        is EventoUiState.ActionSuccess -> {
+                            binding.progressBar.visibility = View.GONE
+                            if (showOnlyMine) {
+                                val userId = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE).getInt("userId", -1)
+                                viewModel.fetchMyEvents(userId)
+                            } else {
+                                viewModel.fetchEvents()
                             }
                         }
                         else -> {
@@ -66,6 +114,26 @@ class EventsListFragment : Fragment() {
                 }
             }
         }
+
+        requireActivity().addMenuProvider(object : androidx.core.view.MenuProvider {
+            override fun onCreateMenu(menu: android.view.Menu, menuInflater: android.view.MenuInflater) {}
+
+            override fun onPrepareMenu(menu: android.view.Menu) {
+                val searchItem = menu.findItem(R.id.action_search)
+                val searchView = searchItem?.actionView as? androidx.appcompat.widget.SearchView
+                
+                searchView?.queryHint = getString(R.string.buscarEventoHint)
+                searchView?.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean = false
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        adapter.filter.filter(newText)
+                        return true
+                    }
+                })
+            }
+
+            override fun onMenuItemSelected(menuItem: android.view.MenuItem): Boolean = false
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         if (showOnlyMine) {
             val sharedPrefs = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE)

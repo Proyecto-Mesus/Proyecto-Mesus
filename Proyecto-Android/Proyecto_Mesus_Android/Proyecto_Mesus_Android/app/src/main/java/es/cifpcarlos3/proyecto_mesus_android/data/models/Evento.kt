@@ -8,5 +8,6 @@ data class Evento(
     val descripcion: String,
     val fecha: String,
     val latitud: Double,
-    val longitud: Double
+    val longitud: Double,
+    val idCreador: Int? = null
 ) : Serializable

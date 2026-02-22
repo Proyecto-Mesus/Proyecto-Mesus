@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
 import android.net.Uri
+import android.os.Build
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -27,7 +28,6 @@ import kotlinx.coroutines.launch
 class AddCardFragment : Fragment() {
     private lateinit var binding: AddCardFragmentBinding
     private val viewModel: AddCardViewModel by viewModels()
-    private var collectionId: Int = -1
     private var currentCollection: Coleccion? = null
     private var selectedImageUri: Uri? = null
 
@@ -43,15 +43,6 @@ class AddCardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = AddCardFragmentBinding.inflate(inflater, container, false)
-        collectionId = arguments?.getInt("collectionId") ?: -1
-        
-        currentCollection = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getSerializable("coleccion", Coleccion::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            arguments?.getSerializable("coleccion") as? Coleccion
-        }
-        
         return binding.root
     }
 
@@ -59,8 +50,16 @@ class AddCardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         
         CloudinaryHelper.init(requireContext())
+//        val collectionId = arguments?.getInt("collectionId") ?: -1
 
-        val cardToEdit = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+        currentCollection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getSerializable("coleccion", Coleccion::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getSerializable("coleccion") as? Coleccion
+        }
+
+        val cardToEdit = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arguments?.getSerializable("carta", Carta::class.java)
         } else {
             @Suppress("DEPRECATION")

@@ -1,8 +1,12 @@
 package es.cifpcarlos3.proyecto_mesus_android.data.repository
 
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Evento
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.MesusApi
-import es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.toDomain
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.MesusApi
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.EventoDto
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.UsuarioDto
+import es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto.toDomain
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class EventoProvider(private val api: MesusApi) {
 
@@ -33,19 +37,49 @@ class EventoProvider(private val api: MesusApi) {
         }
     }
 
+    private fun formatToIso(fecha: String): String {
+        return try {
+            val inputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val date = inputFormat.parse(fecha) ?: java.util.Date()
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+            outputFormat.format(date)
+        } catch (e: Exception) {
+            fecha
+        }
+    }
+
     suspend fun createEvento(evento: Evento, idUsuario: Int): Result<Unit> {
         return try {
-            val dto = es.cifpcarlos3.proyecto_mesus_android.data.remote.dto.EventoDto(
+            val isoFecha = formatToIso(evento.fecha)
+            val dto = EventoDto(
                 id = 0,
                 nombre = evento.nombre,
                 descripcion = evento.descripcion,
-                fecha = evento.fecha,
+                fecha = isoFecha,
                 latitud = evento.latitud,
-                longitud = evento.longitud
+                longitud = evento.longitud,
+                creador = UsuarioDto(id = idUsuario, nombreUsuario = "")
             )
             api.createEvento(dto)
-            // Nota: El endpoint addUsuario a evento existe en Java pero aquí estamos simplificando
-            // asumiendo que el server maneja la autoría o que seguiremos igual que el JDBC original.
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateEvento(id: Int, evento: Evento, idUsuario: Int): Result<Unit> {
+        return try {
+            val isoFecha = formatToIso(evento.fecha)
+            val dto = EventoDto(
+                id = id,
+                nombre = evento.nombre,
+                descripcion = evento.descripcion,
+                fecha = isoFecha,
+                latitud = evento.latitud,
+                longitud = evento.longitud,
+                creador = UsuarioDto(id = idUsuario, nombreUsuario = "")
+            )
+            api.updateEvento(id, dto)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

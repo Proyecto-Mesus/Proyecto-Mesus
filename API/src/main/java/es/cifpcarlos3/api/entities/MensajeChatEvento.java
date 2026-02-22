@@ -29,7 +29,12 @@ public class MensajeChatEvento {
     @JoinColumn(name = "id_chat", nullable = false)
     private ChatEvento chatEvento;
 
+    @com.fasterxml.jackson.annotation.JsonProperty("nombreRemitente")
     @Column(name = "nombre_remitente", nullable = false)
     private String nombreRemitente;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("idUsuario")
+    @Column(name = "id_usuario", nullable = true)
+    private Integer idUsuario;
 
 }

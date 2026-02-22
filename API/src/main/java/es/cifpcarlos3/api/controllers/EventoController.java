@@ -45,8 +45,9 @@ public class EventoController {
 
 
     //obtener todos los eventos de un usuario
+    @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<List<EventoSinContrasenaDTO>> findEventosByIdUsuario(@PathVariable int idUsuario) {
-        List<EventoSinContrasenaDTO> eventosDTO = eventoRepository.findEventosByUsuarios_Id(idUsuario)
+        List<EventoSinContrasenaDTO> eventosDTO = eventoRepository.findByCreadorId(idUsuario)
                 .stream()
                 .map(eventoMapper::toDTO)
                 .toList();

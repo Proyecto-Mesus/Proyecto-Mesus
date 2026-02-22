@@ -27,11 +27,13 @@ public class Evento {
     @Column(nullable = false, length = 250)
     private String descripcion;
 
+    @com.fasterxml.jackson.annotation.JsonProperty("latitud")
     @Column(name = "ubicacion_latitud")
-    private Float latitud;
+    private Double latitud;
 
+    @com.fasterxml.jackson.annotation.JsonProperty("longitud")
     @Column(name = "ubicacion_longitud")
-    private Float longitud;
+    private Double longitud;
 
     @Column(name = "fecha", nullable = false)
     private LocalDateTime fecha;
@@ -54,9 +56,8 @@ public class Evento {
     @OneToOne(mappedBy = "evento", cascade = CascadeType.ALL)
     private ChatEvento chatEvento;
 
-    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "id_creador", nullable = false)
+    @JoinColumn(name = "id_creador", nullable = true)
     private Usuario creador;
 
 }
