@@ -1,0 +1,115 @@
+<resources>
+    <string name="nombre">Nombre</string>
+    <string name="descripcion">Descripción</string>
+    <string name="precio">Precio</string>
+    <string name="fecha">Fecha</string>
+    <string name="guardarEvento">Guardar Evento</string>
+    <string name="eventoGuardado">Evento guardado con éxito</string>
+
+    <string name="app_name">Proyecto Mesus Android</string>
+    <string name="User">Usuario</string>
+    <string name="Email">Correo</string>
+    <string name="Passwd">Contraseña</string>
+    <string name="buttonLogin">Iniciar Sesión</string>
+    <string name="buttonLogginGoogle">Iniciar Sesión en Google</string>
+    <string name="errorLogin">Funcionalidad no implementada aún</string>
+    <string name="createAccount">¿No tienes cuenta aún? Crea una</string>
+    <string name="confirmPsswd">Confirmar contraseña</string>
+    <string name="fechaNac">Fecha de nacimiento</string>
+    <string name="crearCuenta">Crear cuenta</string>
+    <string name="cerrarSnackbar">CERRAR</string>
+    <string name="loginCorrecto">Login correcto</string>
+    <string name="loginIncorrecto">Login incorrecto</string>
+    <string name="contraseñasIncorrectas">Las contraseñas no coinciden</string>
+    <string name="actualizar">Actualizar</string>
+    <string name="cartaGuardada">Carta guardada con éxito</string>
+    <string name="errorNombreVacio">El nombre no puede estar vacío</string>
+    <string name="errorSubirImagen">Error al subir la imagen</string>
+    <string name="errorGuardarDB">Error al guardar en la base de datos</string>
+    <string name="seleccionarJuego">Por favor, selecciona un juego</string>
+    <string name="coleccionCreada">Colección creada</string>
+    <string name="eliminarColeccion">Eliminar Colección</string>
+    <string name="confirmarEliminarColeccion">¿Seguro que quieres eliminar \"%s\"? Se perderán todas las cartas dentro.</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="coleccionEliminada">Colección eliminada</string>
+    <string name="buscarColeccionHint">Buscar colección...</string>
+    <string name="eliminarCarta">Eliminar Carta</string>
+    <string name="confirmarEliminarCarta">¿Seguro que quieres eliminar \"%s\"?</string>
+    <string name="cartaEliminada">Carta eliminada</string>
+    <string name="buscarCartaHint">Buscar carta...</string>
+    <string name="subiendoImagen">Subiendo imagen...</string>
+    <string name="gamePokemon">Pokémon</string>
+    <string name="gameMTG">MTG</string>
+    <string name="gameYugioh">Yu-Gi-Oh!</string>
+    <string name="gameOtro">Otro</string>
+    <string name="publica">Pública</string>
+    <string name="privada">Privada</string>
+    
+    <string name="nuevaCarta">Nueva Carta</string>
+    <string name="seleccionarImagen">Seleccionar Imagen</string>
+    <string name="hintCardName">Nombre de la carta</string>
+    <string name="hintCardSet">Set / Expansión</string>
+    <string name="hintCardNumber">Número en el Set</string>
+    <string name="guardarCarta">Guardar Carta</string>
+    
+    <string name="nuevaColeccion">Nueva Colección</string>
+    <string name="hintCollectionName">Nombre de la colección</string>
+    <string name="hintSeleccionarJuego">Selecciona un juego</string>
+    <string name="publicaLabel">¿Pública?</string>
+    <string name="guardarColeccion">Guardar Colección</string>
+    
+    <string name="buscarUsuarios">Buscar Usuarios</string>
+    <string name="hintBuscarUsuario">Nombre de usuario</string>
+    <string name="noResultados">No se encontraron resultados</string>
+    <string name="registroExitoso">Usuario registrado correctamente</string>
+    <string name="usuarioExiste">El usuario ya existe</string>
+    <string name="emailExiste">El email ya existe</string>
+    <string name="coleccionTitular">Colección de %s</string>
+    <string name="errorSesion">Error de sesión</string>
+    <string name="errorGuardado">Error al guardar</string>
+    <string name="errorActualizacion">Error al actualizar</string>
+    <string name="no_hay_chats">No hay conversaciones activas</string>
+    <string name="abrirChatEvento">Abrir Chat del Evento</string>
+
+    <string name="tab_all">Todos</string>
+    <string name="tab_my_events">Mis Eventos</string>
+
+    <string name="loginAccount">¿Ya tienes cuenta? Inicia Sesión</string>
+    <string name="welcomeText1">¡Bienvenid@!</string>
+    <string name="welcomeText2">¡Tus colecciones favoritas te esperan!</string>
+    <string name="completaRegistro">Completa el registro</string>
+    <string name="escribe_un_mensaje">Escribe un mensaje...</string>
+
+    <string name="buscar_usuario">Buscar Usuario</string>
+    <string name="no_se_encontraron_usuarios">No se encontraron usuarios</string>
+    <string name="actualizarEvento">Actualizar Evento</string>
+    <string name="eventoActualizado">Evento actualizado con éxito</string>
+
+    <!-- Cadenas para eventos -->
+    <string name="eliminarEvento">Eliminar Evento</string>
+    <string name="confirmarEliminarEvento">¿Seguro que quieres eliminar \"%s\"?</string>
+    <string name="eventoEliminado">Evento eliminado</string>
+    <string name="buscarEventoHint">Buscar evento...</string>
+
+    <!-- Cadenas para menús -->
+    <string name="menu_coleccion">Colección</string>
+    <string name="menu_eventos">Eventos</string>
+    <string name="menu_chats">Chats</string>
+    <string name="nav_cerrar_sesion">Cerrar Sesión</string>
+    <string name="action_buscar">Buscar</string>
+    <string name="action_cambiar_vista">Cambiar Vista</string>
+    <string name="action_editar">Editar</string>
+
+    <!-- Cadenas de layouts y errores -->
+    <string name="ubicacion_label">Ubicación</string>
+    <string name="selecciona_ubicacion_label">Selecciona la ubicación:</string>
+    <string name="error_seleccionar_ubicacion">Por favor, selecciona una ubicación en el mapa</string>
+    <string name="error_coleccion_no_encontrada">Error: Colección no encontrada</string>
+    <string name="ubicacion_actual">Ubicación actual</string>
+    <string name="ubicacion_seleccionada">Ubicación seleccionada</string>
+    
+    <string name="btn_inscribirse">Inscribirse en el Evento</string>
+    <string name="inscripcion_correcta">¡Te has inscrito correctamente!</string>
+    <string name="error_inscripcion">Hubo un error al inscribirte</string>
+</resources>
