@@ -8,6 +8,7 @@ public class MensajeChatEvento {
     private LocalDateTime fechaEnvio;
     private ChatEvento chatEvento;
     private String nombreRemitente;
+    private int idUsuario;
 
     public MensajeChatEvento() {
     }
@@ -19,6 +20,14 @@ public class MensajeChatEvento {
         this.fechaEnvio = fechaEnvio;
         this.chatEvento = chatEvento;
         this.nombreRemitente = nombreRemitente;
+    }
+
+    public MensajeChatEvento(String contenido, LocalDateTime fechaEnvio,
+                             String nombreRemitente, int idUsuario) {
+        this.contenido = contenido;
+        this.fechaEnvio = fechaEnvio;
+        this.nombreRemitente = nombreRemitente;
+        this.idUsuario = idUsuario;
     }
 
     public int getId() {
@@ -60,6 +69,13 @@ public class MensajeChatEvento {
     public void setNombreRemitente(String nombreRemitente) {
         this.nombreRemitente = nombreRemitente;
     }
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
 
     @Override
     public String toString() {
@@ -69,6 +85,7 @@ public class MensajeChatEvento {
                 ", fechaEnvio=" + fechaEnvio +
                 ", chatEvento=" + chatEvento +
                 ", nombreRemitente='" + nombreRemitente + '\'' +
+                ", idUsuario='" + idUsuario + '\'' +
                 '}';
     }
 }

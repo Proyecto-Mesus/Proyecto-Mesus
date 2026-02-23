@@ -7,6 +7,7 @@ module es.cifpcarlos3.proyecto_mesus_javafx {
     requires jdk.compiler;
     requires javafx.graphics;
     requires cloudinary.core;
+    requires javafx.base;
 
     opens es.cifpcarlos3.proyecto_mesus_javafx to javafx.fxml;
 

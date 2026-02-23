@@ -30,6 +30,23 @@ public class Evento {
         this.creador = creador;
     }
 
+    public Evento(String nombre, String descripcion, Float latitud, Float longitud, LocalDateTime fecha, Usuario creador) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.latitud = latitud;
+        this.longitud = longitud;
+        this.fecha = fecha;
+        this.creador = creador;
+    }
+
+    public Evento(String nombre, String descripcion, Float latitud, Float longitud, LocalDateTime fecha) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.latitud = latitud;
+        this.longitud = longitud;
+        this.fecha = fecha;
+    }
+
     public int getId() {
         return id;
     }

@@ -46,8 +46,28 @@ public class EventoController {
 
     //obtener todos los eventos de un usuario
     @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<List<EventoSinContrasenaDTO>> findEventosByIdUsuario(@PathVariable int idUsuario) {
+    public ResponseEntity<List<EventoSinContrasenaDTO>> findEventosByIdCreador(@PathVariable int idUsuario) {
         List<EventoSinContrasenaDTO> eventosDTO = eventoRepository.findByCreadorId(idUsuario)
+                .stream()
+                .map(eventoMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(eventosDTO);
+    }
+
+    //obtener todos los eventos a los que está inscrito un usuario
+    @GetMapping("/inscritos/usuario/{idUsuario}")
+    public ResponseEntity<List<EventoSinContrasenaDTO>> findEventosByIdUsuario(@PathVariable int idUsuario) {
+        List<EventoSinContrasenaDTO> eventosDTO = eventoRepository.findEventosByUsuarios_Id(idUsuario)
+                .stream()
+                .map(eventoMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(eventosDTO);
+    }
+
+    //obtener todos los eventos a los que no está inscrito un usuario
+    @GetMapping("/no_inscritos/usuario/{idUsuario}")
+    public ResponseEntity<List<EventoSinContrasenaDTO>> findEventosByNotIdUsuario(@PathVariable int idUsuario) {
+        List<EventoSinContrasenaDTO> eventosDTO = eventoRepository.findEventosDondeUsuarioNoParticipa(idUsuario)
                 .stream()
                 .map(eventoMapper::toDTO)
                 .toList();
@@ -87,7 +107,7 @@ public class EventoController {
 
             eventoRepository.save(evento);
 
-            return ResponseEntity.ok(evento);
+            return ResponseEntity.ok().build();
 
         } else {
             return ResponseEntity.notFound().build();
