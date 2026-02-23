@@ -9,7 +9,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 public class CartaService {
-    private static final String BASE_URL = "http://localhost:8080/api/cartas";
+    private static final String BASE_URL = "https://proyecto-mesus.onrender.com/api/cartas";
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
     public CartaService() {

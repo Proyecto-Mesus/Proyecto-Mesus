@@ -9,6 +9,8 @@ module es.cifpcarlos3.proyecto_mesus_javafx {
     requires cloudinary.core;
     requires javafx.base;
     requires google.maps.services;
+    requires javafx.web;
+    requires jdk.jsobject;
 
     opens es.cifpcarlos3.proyecto_mesus_javafx to javafx.fxml;
 

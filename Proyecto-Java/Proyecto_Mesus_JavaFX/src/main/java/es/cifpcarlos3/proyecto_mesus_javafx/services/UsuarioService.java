@@ -12,7 +12,7 @@ import java.util.List;
 
 public class UsuarioService {
 
-    private static final String BASE_URL = "http://localhost:8080/api/usuarios";
+    private static final String BASE_URL = "https://proyecto-mesus.onrender.com/api/usuarios";
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 

@@ -16,13 +16,13 @@ public class EventoItemController {
     @FXML private Label textFecha;
     @FXML private Label textOrganizador;
 
-    GoogleMapsService maps = new GoogleMapsService();
+    private final GoogleMapsService googleMapsService = new GoogleMapsService();
 
     public void setData(Evento evento) {
         textNombre.setText(evento.getNombre());
         textDescripcion.setText(evento.getDescripcion());
         try {
-            textUbicacion.setText(maps.obtenerDireccion(evento.getLatitud(), evento.getLongitud()));
+            textUbicacion.setText(googleMapsService.obtenerDireccion(evento.getLatitud(), evento.getLongitud()));
         } catch (Exception e) {
             textUbicacion.setText("Error API Google Maps");
             System.out.println(e.getMessage());

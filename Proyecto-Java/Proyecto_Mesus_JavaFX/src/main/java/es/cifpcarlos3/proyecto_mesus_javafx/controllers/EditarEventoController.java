@@ -3,10 +3,15 @@ package es.cifpcarlos3.proyecto_mesus_javafx.controllers;
 import es.cifpcarlos3.proyecto_mesus_javafx.models.Evento;
 import es.cifpcarlos3.proyecto_mesus_javafx.services.ChatEventoService;
 import es.cifpcarlos3.proyecto_mesus_javafx.services.EventoService;
+import es.cifpcarlos3.proyecto_mesus_javafx.utils.GoogleMapsService;
 import es.cifpcarlos3.proyecto_mesus_javafx.utils.SessionManager;
+import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import netscape.javascript.JSObject;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,9 +24,10 @@ public class EditarEventoController {
     @FXML
     private TextField textFieldDescripcion;
     @FXML
-    private TextField textFieldLongitud;
+    private WebView map;
+    private WebEngine webEngine;
     @FXML
-    private TextField textFieldLatitud;
+    private Label textUbicacion;
     @FXML
     DatePicker datePicker;
     @FXML
@@ -34,10 +40,14 @@ public class EditarEventoController {
     @FXML
     private Button btnCancelar;
 
+    private Double latitud;
+    private Double longitud;
+
     private Evento evento;
     private Stage stage;
     private final EventoService eventoService = new EventoService();
     private final ChatEventoService chatEventoService = new ChatEventoService();
+    private final GoogleMapsService googleMapsService = new GoogleMapsService();
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -45,11 +55,22 @@ public class EditarEventoController {
 
     public void setEvento(Evento evento) {
         this.evento = evento;
-        cargarDatos();
     }
 
     @FXML
     public void initialize() {
+        webEngine = map.getEngine();
+        webEngine.load(getClass().getResource("/es/cifpcarlos3/proyecto_mesus_javafx/html/mapa.html").toExternalForm());
+
+        webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+            if (newState == Worker.State.SUCCEEDED) {
+                JSObject window = (JSObject) webEngine.executeScript("window");
+                window.setMember("app", this); // expone métodos de Java a JS
+
+                cargarDatos(evento);
+            }
+        });
+
         spinnerHora.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 12));
         spinnerMinuto.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
 
@@ -61,10 +82,6 @@ public class EditarEventoController {
     private void editarEvento() {
         String nombre = textFieldNombre.getText();
         String descripcion = textFieldDescripcion.getText();
-        String longitud = textFieldLongitud.getText();
-        String latitud = textFieldLatitud.getText();
-        float longitudFloat;
-        float latitudFloat;
 
         LocalDate fecha = datePicker.getValue();
         int hora = spinnerHora.getValue();
@@ -75,18 +92,8 @@ public class EditarEventoController {
 
         if(nombre == null || nombre.trim().isEmpty() ||
                 descripcion == null || descripcion.trim().isEmpty() ||
-                longitud == null || longitud.trim().isEmpty() ||
-                latitud == null || latitud.trim().isEmpty()) {
+                latitud == null ||longitud == null) {
             showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor, rellene todos los campos.");
-            return;
-        }
-
-        try {
-            longitudFloat = Float.parseFloat(longitud);
-            latitudFloat = Float.parseFloat(latitud);
-        } catch (NumberFormatException e) {
-            System.out.println(e.getMessage());
-            showAlert(Alert.AlertType.WARNING, "Ubicación errónea", "Por favor, la longitud y latitud deben ser float.");
             return;
         }
 
@@ -96,7 +103,7 @@ public class EditarEventoController {
         }
 
         try {
-            Evento eventoModificado = eventoService.updateEvento(evento.getId(), new Evento(nombre, descripcion, latitudFloat, longitudFloat, fechaHora));
+            Evento eventoModificado = eventoService.updateEvento(evento.getId(), new Evento(nombre, descripcion, latitud.floatValue(), longitud.floatValue(), fechaHora));
 
             if (eventoModificado != null) {
                 showAlert(javafx.scene.control.Alert.AlertType.INFORMATION, "Evento modificado exitosamente",
@@ -128,14 +135,28 @@ public class EditarEventoController {
         alert.showAndWait();
     }
 
-    private void cargarDatos() {
+    private void cargarDatos(Evento evento) {
         textFieldNombre.setText(evento.getNombre());
         textFieldDescripcion.setText(evento.getDescripcion());
-        textFieldLatitud.setText(evento.getLatitud().toString());
-        textFieldLongitud.setText(evento.getLongitud().toString());
-
+        webEngine.executeScript("map.setView([" + evento.getLatitud() + ", " + evento.getLongitud() + "], 15);");
+        try {
+            textUbicacion.setText(googleMapsService.obtenerDireccion(evento.getLatitud(), evento.getLongitud()));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         datePicker.setValue(evento.getFecha().toLocalDate());
         spinnerHora.getValueFactory().setValue(evento.getFecha().getHour());
         spinnerMinuto.getValueFactory().setValue(evento.getFecha().getMinute());
+    }
+
+    public void onLocationSelected(double lat, double lng) {
+        latitud = lat;
+        longitud = lng;
+        try {
+            textUbicacion.setText(googleMapsService.obtenerDireccion(latitud, longitud));
+        } catch (Exception e) {
+            textUbicacion.setText("Error API Google Maps");
+            System.out.println(e.getMessage());
+        }
     }
 }

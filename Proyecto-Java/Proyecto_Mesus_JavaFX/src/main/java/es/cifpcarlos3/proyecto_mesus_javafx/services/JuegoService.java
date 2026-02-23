@@ -10,7 +10,7 @@ import java.net.http.HttpResponse;
 import java.util.List;
 
 public class JuegoService {
-    private static final String BASE_URL = "http://localhost:8080/api/juegos";
+    private static final String BASE_URL = "https://proyecto-mesus.onrender.com/api/juegos";
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 

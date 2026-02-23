@@ -12,7 +12,7 @@ import java.net.http.HttpResponse;
 import java.util.List;
 
 public class EventoService {
-    private static final String BASE_URL = "http://localhost:8080/api/eventos";
+    private static final String BASE_URL = "https://proyecto-mesus.onrender.com/api/eventos";
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
     public EventoService() {

@@ -8,7 +8,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 public class ColeccionService {
-    private static final String BASE_URL = "http://localhost:8080/api/colecciones";
+    private static final String BASE_URL = "https://proyecto-mesus.onrender.com/api/colecciones";
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
     public ColeccionService() {

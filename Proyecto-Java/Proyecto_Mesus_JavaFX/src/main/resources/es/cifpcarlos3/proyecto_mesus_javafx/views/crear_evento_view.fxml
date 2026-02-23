@@ -3,6 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
 
 <VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.CrearEventoController">
     <padding>
@@ -11,18 +12,18 @@
 
     <TextField fx:id="textFieldNombre" promptText="Nombre" />
     <TextField fx:id="textFieldDescripcion" promptText="Descripción" />
-    <TextField fx:id="textFieldLongitud" promptText="Longitud" />
-    <TextField fx:id="textFieldLatitud" promptText="Latitud" />
+   <WebView fx:id="map" prefHeight="200.0" prefWidth="200.0" />
+   <Label fx:id="textUbicacion" text="Selecciona una ubicación" />
 
-    <DatePicker fx:id="datePicker"/>
+    <DatePicker fx:id="datePicker" />
     <HBox spacing="10">
-        <Spinner fx:id="spinnerHora"/>
-        <Spinner fx:id="spinnerMinuto"/>
+        <Spinner fx:id="spinnerHora" />
+        <Spinner fx:id="spinnerMinuto" />
     </HBox>
 
 
-    <Button fx:id="btnCrearEvento" onAction="#crearEvento" mnemonicParsing="false" text="Crear" />
-    <Button fx:id="btnCancelar" onAction="#salir" mnemonicParsing="false" text="Cancelar" />
+    <Button fx:id="btnCrearEvento" mnemonicParsing="false" onAction="#crearEvento" text="Crear" />
+    <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#salir" text="Cancelar" />
 
 
 </VBox>
