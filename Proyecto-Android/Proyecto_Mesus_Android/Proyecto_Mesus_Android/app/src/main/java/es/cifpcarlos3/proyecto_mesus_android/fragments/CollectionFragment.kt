@@ -27,6 +27,7 @@ import androidx.core.view.MenuProvider
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class CollectionFragment : Fragment() {
@@ -64,7 +65,7 @@ class CollectionFragment : Fragment() {
                 val currentUserId = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE).getInt("userId", -1)
                 
                 if (coleccion.idUsuario == currentUserId) {
-                    val popup = androidx.appcompat.widget.PopupMenu(requireContext(), cardView)
+                    val popup = PopupMenu(requireContext(), cardView)
                     popup.menuInflater.inflate(R.menu.menu_context_item, popup.menu)
                     
                     popup.setOnMenuItemClickListener { item ->
