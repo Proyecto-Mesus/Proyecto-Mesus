@@ -96,6 +96,8 @@ public class ColeccionPropiaController {
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL); // bloquea la ventana principal
 
+            stage.setResizable(false);
+
             // pasa el stage al controlador
             CrearCartaController controller = loader.getController();
             controller.setColeccion(coleccion);
@@ -129,6 +131,8 @@ public class ColeccionPropiaController {
             stage.setTitle("Modificar colección");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL); // bloquea la ventana principal
+
+            stage.setResizable(false);
 
             // pasa el stage al controlador
             EditarCartaController controller = loader.getController();

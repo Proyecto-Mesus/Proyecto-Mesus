@@ -90,6 +90,8 @@ public class MisEventosController {
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL); // bloquea la ventana principal
 
+            stage.setResizable(false);
+
             // pasa el stage al controlador
             CrearEventoController controller = loader.getController();
             controller.setStage(stage);
@@ -125,6 +127,8 @@ public class MisEventosController {
             stage.setTitle("Modificar evento");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL); // bloquea la ventana principal
+
+            stage.setResizable(false);
 
             // pasa el stage al controlador
             EditarEventoController controller = loader.getController();

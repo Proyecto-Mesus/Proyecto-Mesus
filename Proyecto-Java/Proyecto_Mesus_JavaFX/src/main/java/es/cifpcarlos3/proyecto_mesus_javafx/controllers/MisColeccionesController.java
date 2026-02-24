@@ -1,5 +1,6 @@
 package es.cifpcarlos3.proyecto_mesus_javafx.controllers;
 
+import es.cifpcarlos3.proyecto_mesus_javafx.MainApplication;
 import es.cifpcarlos3.proyecto_mesus_javafx.models.Coleccion;
 import es.cifpcarlos3.proyecto_mesus_javafx.services.ColeccionService;
 import es.cifpcarlos3.proyecto_mesus_javafx.services.UsuarioService;
@@ -100,7 +101,11 @@ public class MisColeccionesController {
             Stage stage = new Stage();
             stage.setTitle("Crear colección");
             stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL); // bloquea la ventana principal
+
+            stage.initModality(Modality.APPLICATION_MODAL);
+            // bloquea la ventana principal
+
+            stage.setResizable(false);
 
             // pasa el stage al controlador
             CrearColeccionController controller = loader.getController();
@@ -158,6 +163,8 @@ public class MisColeccionesController {
             stage.setTitle("Modificar colección");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL); // bloquea la ventana principal
+
+            stage.setResizable(false);
 
             // pasa el stage al controlador
             EditarColeccionController controller = loader.getController();
