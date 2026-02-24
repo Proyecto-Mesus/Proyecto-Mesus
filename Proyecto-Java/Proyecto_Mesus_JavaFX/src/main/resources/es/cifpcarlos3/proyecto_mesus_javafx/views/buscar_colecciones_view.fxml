@@ -4,11 +4,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.BuscarColeccionesController">
+<VBox stylesheets="@../styles/base.css" alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.BuscarColeccionesController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <TextField fx:id="textFieldUsuario" promptText="Buscar usuarios" />
-   <ListView fx:id="listViewUsuarios" />
+    <TextField styleClass="defaultTextField" fx:id="textFieldUsuario" promptText="Buscar usuarios" />
+    <ListView styleClass="defaultList" fx:id="listViewUsuarios" />
 </VBox>

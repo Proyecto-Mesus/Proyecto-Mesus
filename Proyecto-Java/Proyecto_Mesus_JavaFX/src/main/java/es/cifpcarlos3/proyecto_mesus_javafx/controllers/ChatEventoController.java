@@ -60,6 +60,7 @@ public class ChatEventoController {
                 }
             }
         });
+        listViewMensajes.setSelectionModel(null);
     }
 
     @FXML

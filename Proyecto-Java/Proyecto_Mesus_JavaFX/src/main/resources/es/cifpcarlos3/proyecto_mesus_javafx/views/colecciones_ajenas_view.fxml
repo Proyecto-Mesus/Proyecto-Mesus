@@ -5,12 +5,12 @@
 <?import javafx.scene.layout.*?>
 
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.ColeccionesAjenasController">
+<VBox stylesheets="@../styles/base.css" alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.ColeccionesAjenasController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#abrirBuscarColecciones" text="Volver" />
+    <Button styleClass="defaultButton" fx:id="btnVolver" mnemonicParsing="false" onAction="#abrirBuscarColecciones" text="Volver" />
 
-    <ListView fx:id="listViewColecciones" />
+    <ListView styleClass="defaultList" fx:id="listViewColecciones" />
 </VBox>
