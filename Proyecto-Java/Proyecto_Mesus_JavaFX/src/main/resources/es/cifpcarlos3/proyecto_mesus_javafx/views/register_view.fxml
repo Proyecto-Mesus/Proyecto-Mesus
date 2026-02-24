@@ -22,5 +22,6 @@
         <PasswordField styleClass="defaultTextField" fx:id="textFieldPassword" promptText="Contraseña" />
         <PasswordField styleClass="defaultTextField" fx:id="textFieldConfirmPassword" promptText="Confirmar contraseña" />
         <Button styleClass="defaultButton" fx:id="btnRegister" mnemonicParsing="false" onAction="#register" text="Crear cuenta" />
+        <Label styleClass="defaultTextLink" fx:id="textAbrirLogin" onMouseClicked="#loadLogin" text="¿Ya tienes una cuenta? Inicia sesión" />
     </children>
 </VBox>
