@@ -26,7 +26,7 @@ public class MainApplication extends Application {
         stage.setResizable(false);
 
         stage.setScene(scene);
-        stage.setTitle("CardVault");
+        stage.setTitle("CardCollection");
         stage.show();
     }
 
