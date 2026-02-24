@@ -18,6 +18,5 @@ public class ColeccionItemController {
         textNombre.setText(coleccion.getNombre());
         textJuego.setText(coleccion.getJuego().getNombre());
         textVisibilidad.setText(coleccion.getPublica() ? "Pública" : "Privada");
-        img.setImage(new Image(getClass().getResourceAsStream("/es/cifpcarlos3/proyecto_mesus_javafx/img/pokemon_card_back.jpg")));
     }
 }
