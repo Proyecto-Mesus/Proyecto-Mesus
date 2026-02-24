@@ -19,8 +19,8 @@
         </ImageView>
         <TextField styleClass="defaultTextField" fx:id="textFieldUser" promptText="Usuario" />
         <TextField styleClass="defaultTextField" fx:id="textFieldEmail" promptText="Correo" />
-        <TextField styleClass="defaultTextField" fx:id="textFieldPassword" promptText="Contraseña" />
-        <TextField styleClass="defaultTextField" fx:id="textFieldConfirmPassword" promptText="Confirmar contraseña" />
+        <PasswordField styleClass="defaultTextField" fx:id="textFieldPassword" promptText="Contraseña" />
+        <PasswordField styleClass="defaultTextField" fx:id="textFieldConfirmPassword" promptText="Confirmar contraseña" />
         <Button styleClass="defaultButton" fx:id="btnRegister" mnemonicParsing="false" onAction="#register" text="Crear cuenta" />
     </children>
 </VBox>
