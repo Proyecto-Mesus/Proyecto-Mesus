@@ -4,16 +4,16 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.MisEventosController">
+<VBox styleClass="root" stylesheets="@../styles/base.css" alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.MisEventosController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <Button fx:id="btnCrear" mnemonicParsing="false" onAction="#abrirCrearEvento" text="Nuevo evento" />
+    <Button styleClass="defaultButton" fx:id="btnCrear" mnemonicParsing="false" onAction="#abrirCrearEvento" text="Nuevo evento" />
 
-    <ListView fx:id="listViewEventos" />
+    <ListView styleClass="defaultList" fx:id="listViewEventos" />
 
-    <Button fx:id="btnChat" mnemonicParsing="false" onAction="#abrirChatEvento" text="Abrir Chat" />
-    <Button fx:id="btnEditar" mnemonicParsing="false" onAction="#abrirEditarEvento" text="Editar" />
-    <Button fx:id="btnBorrar" mnemonicParsing="false" onAction="#borrarEvento" text="Eliminar" />
+    <Button styleClass="defaultButton" fx:id="btnChat" mnemonicParsing="false" onAction="#abrirChatEvento" text="Abrir Chat" />
+    <Button styleClass="defaultButton" fx:id="btnEditar" mnemonicParsing="false" onAction="#abrirEditarEvento" text="Editar" />
+    <Button styleClass="defaultButton" fx:id="btnBorrar" mnemonicParsing="false" onAction="#borrarEvento" text="Eliminar" />
 </VBox>

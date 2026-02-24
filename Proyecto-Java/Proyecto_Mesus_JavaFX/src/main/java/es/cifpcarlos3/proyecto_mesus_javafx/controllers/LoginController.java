@@ -6,10 +6,7 @@ import es.cifpcarlos3.proyecto_mesus_javafx.models.Usuario;
 import es.cifpcarlos3.proyecto_mesus_javafx.services.UsuarioService;
 import es.cifpcarlos3.proyecto_mesus_javafx.utils.SessionManager;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.io.IOException;
 
@@ -17,7 +14,7 @@ public class LoginController {
     @FXML
     private TextField textFieldUser;
     @FXML
-    private TextField textFieldPassword;
+    private PasswordField textFieldPassword;
     @FXML
     private Button btnLogin;
     @FXML

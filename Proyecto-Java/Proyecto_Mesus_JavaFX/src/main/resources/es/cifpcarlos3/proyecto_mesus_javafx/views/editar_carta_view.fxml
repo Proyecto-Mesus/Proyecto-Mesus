@@ -6,20 +6,20 @@
 
 <?import javafx.scene.image.ImageView?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.EditarCartaController">
+<VBox styleClass="root" stylesheets="@../styles/base.css" alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.EditarCartaController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
     <ImageView fx:id="img" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-    <Button fx:id="btnSeleccionarImagen" onAction="#seleccionarImagen" mnemonicParsing="false" text="Seleccionar imagen" />
+    <Button styleClass="defaultButton" fx:id="btnSeleccionarImagen" onAction="#seleccionarImagen" mnemonicParsing="false" text="Seleccionar imagen" />
 
-    <TextField fx:id="textFieldNombre" promptText="Nombre" />
-    <TextField fx:id="textFieldSet" promptText="Nombre del set" />
-    <TextField fx:id="textFieldNumeroSet" promptText="Número del set" />
+    <TextField styleClass="defaultTextField" fx:id="textFieldNombre" promptText="Nombre" />
+    <TextField styleClass="defaultTextField" fx:id="textFieldSet" promptText="Nombre del set" />
+    <TextField styleClass="defaultTextField" fx:id="textFieldNumeroSet" promptText="Número del set" />
 
-    <Button fx:id="btnConfirmar" onAction="#editarCarta" mnemonicParsing="false" text="Confirmar" />
-    <Button fx:id="btnCancelar" onAction="#salir" mnemonicParsing="false" text="Cancelar" />
+    <Button styleClass="defaultButton" fx:id="btnConfirmar" onAction="#editarCarta" mnemonicParsing="false" text="Confirmar" />
+    <Button styleClass="defaultButton" fx:id="btnCancelar" onAction="#salir" mnemonicParsing="false" text="Cancelar" />
 
 
 </VBox>

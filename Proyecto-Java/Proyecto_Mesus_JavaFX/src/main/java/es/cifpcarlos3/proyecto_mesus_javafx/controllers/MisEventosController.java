@@ -158,9 +158,7 @@ public class MisEventosController {
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 try {
                     eventoService.deleteEvento(evento.getId());
-                    listViewEventos.getItems().setAll(
-                            eventoService.getEventosByUsuarioId(SessionManager.getUsuarioActual().getId())
-                    );
+                    cargarEventos();
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }

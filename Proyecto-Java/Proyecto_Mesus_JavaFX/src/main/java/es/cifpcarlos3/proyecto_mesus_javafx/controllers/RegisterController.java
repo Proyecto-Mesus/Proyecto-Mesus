@@ -4,10 +4,9 @@ import es.cifpcarlos3.proyecto_mesus_javafx.MainApplication;
 import es.cifpcarlos3.proyecto_mesus_javafx.models.Usuario;
 import es.cifpcarlos3.proyecto_mesus_javafx.services.UsuarioService;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+
+import java.io.IOException;
 
 public class RegisterController {
     @FXML
@@ -15,9 +14,9 @@ public class RegisterController {
     @FXML
     private TextField textFieldEmail;
     @FXML
-    private TextField textFieldPassword;
+    private PasswordField textFieldPassword;
     @FXML
-    private TextField textFieldConfirmPassword;
+    private PasswordField textFieldConfirmPassword;
     @FXML
     private Button btnRegister;
 
@@ -63,6 +62,11 @@ public class RegisterController {
             showAlert(javafx.scene.control.Alert.AlertType.ERROR, "Error de registro",
                     "No se pudo registrar el usuario. Comprueba si el usuario o email ya existen.");
         }
+    }
+
+    @FXML
+    private void loadLogin() throws IOException {
+        MainApplication.setRoot("login_view");
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String content) {

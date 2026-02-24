@@ -5,25 +5,25 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.*?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.CrearEventoController">
+<VBox styleClass="root" stylesheets="@../styles/base.css" alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.CrearEventoController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <TextField fx:id="textFieldNombre" promptText="Nombre" />
-    <TextField fx:id="textFieldDescripcion" promptText="Descripción" />
+    <TextField styleClass="defaultTextField" fx:id="textFieldNombre" promptText="Nombre" />
+    <TextField styleClass="defaultTextField" fx:id="textFieldDescripcion" promptText="Descripción" />
    <WebView fx:id="map" prefHeight="200.0" prefWidth="200.0" />
-   <Label fx:id="textUbicacion" text="Selecciona una ubicación" />
+   <Label styleClass="bold" fx:id="textUbicacion" text="Selecciona una ubicación" />
 
-    <DatePicker fx:id="datePicker" />
+    <DatePicker styleClass="defaultTextField" fx:id="datePicker" />
     <HBox spacing="10">
-        <Spinner fx:id="spinnerHora" />
-        <Spinner fx:id="spinnerMinuto" />
+        <Spinner styleClass="defaultTextField" fx:id="spinnerHora" />
+        <Spinner styleClass="defaultTextField" fx:id="spinnerMinuto" />
     </HBox>
 
 
-    <Button fx:id="btnCrearEvento" mnemonicParsing="false" onAction="#crearEvento" text="Crear" />
-    <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#salir" text="Cancelar" />
+    <Button styleClass="defaultButton" fx:id="btnCrearEvento" mnemonicParsing="false" onAction="#crearEvento" text="Crear" />
+    <Button styleClass="defaultButton" fx:id="btnCancelar" mnemonicParsing="false" onAction="#salir" text="Cancelar" />
 
 
 </VBox>

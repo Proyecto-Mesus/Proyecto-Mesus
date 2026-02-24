@@ -13,6 +13,28 @@
     -fx-pref-width: 200;
 }
 
+.underTabButton{
+    -fx-background-color: #FF745B;
+    -fx-background-radius: 20;
+
+    -fx-text-fill: #F5F5F5;
+
+    -fx-font-weight: Bold;
+
+    -fx-pref-width: 200;
+}
+
+.TabButton{
+    -fx-background-color: #FF3B30;
+    -fx-background-radius: 20;
+
+    -fx-text-fill: #F5F5F5;
+
+    -fx-font-weight: Bold;
+
+    -fx-pref-width: 100;
+}
+
 .defaultTextField{
     -fx-background-color: #FF745B;
     -fx-background-radius: 5;
@@ -55,6 +77,10 @@
     -fx-font-weight: Bold;
 }
 
+.bold{
+    -fx-font-weight: Bold;
+}
+
 .defaultLightElement{
     -fx-background-color: #FF745B;
     -fx-background-radius: 5;
@@ -69,6 +95,9 @@
 .defaultElement{
     -fx-background-color: #FF3B30;
     -fx-background-radius: 5;
+
+    -fx-pref-width: 300;
+    -fx-max-width: 300;
 }
 
 .defaultItem{
@@ -84,7 +113,7 @@
 
     -fx-pref-width: 400;
     -fx-max-width: 400;
-    -fx-alignment: right;
+    -fx-alignment: center-right;
 }
 
 
@@ -99,7 +128,7 @@
     -fx-text-fill: #F5F5F5;
     -fx-font-size: 10;
     -fx-font-weight: Bold;
-    -fx-alignment: right;
+    -fx-alignment: center-right;
     -fx-padding: 5;
 }
 
@@ -107,7 +136,7 @@
     -fx-text-fill: #F5F5F5;
     -fx-font-size: 8;
     -fx-font-weight: Bold;
-    -fx-alignment: right;
+    -fx-alignment: center-right;
     -fx-padding: 5;
 }
 
@@ -115,7 +144,7 @@
     -fx-text-fill: #F5F5F5;
     -fx-font-size: 15;
     -fx-font-weight: Bold;
-    -fx-alignment: right;
+    -fx-alignment: center-right;
 }
 
 .defaultOnlyBorder{
@@ -135,7 +164,7 @@
     -fx-max-width: 600;
 }
 .chatList .list-cell{
-    -fx-alignment: right;
+    -fx-alignment: center-right;
 }
 .defaultList .scroll-bar:vertical {
     -fx-background-color: #FF3B30;

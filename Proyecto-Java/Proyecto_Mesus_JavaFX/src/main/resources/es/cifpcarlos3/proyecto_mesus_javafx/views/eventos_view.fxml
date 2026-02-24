@@ -6,9 +6,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<TabPane xmlns:fx="http://javafx.com/fxml" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.EventosController">
+<TabPane styleClass="root" stylesheets="@../styles/base.css" xmlns:fx="http://javafx.com/fxml" fx:controller="es.cifpcarlos3.proyecto_mesus_javafx.controllers.EventosController">
     <tabs>
-        <Tab fx:id="tabBuscarEventos" text="Explorar Eventos" closable="false"/>
-        <Tab fx:id="tabMisEventos" text="Mis Eventos" closable="false"/>
+        <Tab styleClass="defaultButton" fx:id="tabBuscarEventos" text="Explorar Eventos" closable="false"/>
+        <Tab styleClass="defaultButton" fx:id="tabMisEventos" text="Mis Eventos" closable="false"/>
     </tabs>
 </TabPane>
