@@ -48,7 +48,7 @@ class EventoProvider(private val api: MesusApi) {
         }
     }
 
-    suspend fun createEvento(evento: Evento, idUsuario: Int): Result<Unit> {
+    suspend fun createEvento(evento: Evento, idUsuario: Int): Result<Int> {
         return try {
             val isoFecha = formatToIso(evento.fecha)
             val dto = EventoDto(
@@ -60,8 +60,8 @@ class EventoProvider(private val api: MesusApi) {
                 longitud = evento.longitud,
                 creador = UsuarioDto(id = idUsuario, nombreUsuario = "")
             )
-            api.createEvento(dto)
-            Result.success(Unit)
+            val createdEvento = api.createEvento(dto)
+            Result.success(createdEvento.id)
         } catch (e: Exception) {
             Result.failure(e)
         }

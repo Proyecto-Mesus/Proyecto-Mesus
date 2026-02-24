@@ -1,6 +1,7 @@
 package es.cifpcarlos3.proyecto_mesus_android
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +23,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
 import es.cifpcarlos3.proyecto_mesus_android.fragments.ViewTogglable
+import es.cifpcarlos3.proyecto_mesus_android.fragments.CollectionFragment
+import es.cifpcarlos3.proyecto_mesus_android.fragments.CollectionDetailFragment
+import es.cifpcarlos3.proyecto_mesus_android.fragments.EventsFragment
+import es.cifpcarlos3.proyecto_mesus_android.fragments.UserSearchFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -109,7 +114,7 @@ class MainActivity : AppCompatActivity() {
                     val bundle = navController.currentBackStackEntry?.arguments
                     val username = bundle?.getString("username")
                     val collectionId = bundle?.getInt("collectionId") ?: -1
-                    val currentCollection = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    val currentCollection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         bundle?.getSerializable("coleccion", Coleccion::class.java)
                     } else {
                         @Suppress("DEPRECATION")
@@ -192,22 +197,74 @@ class MainActivity : AppCompatActivity() {
         addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_toolbar, menu)
+                val searchItem = menu.findItem(R.id.action_search)
+                val searchView = searchItem?.actionView as? androidx.appcompat.widget.SearchView
+
+                searchView?.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean = false
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+                        val currentFragment = navHostFragment?.childFragmentManager?.primaryNavigationFragment
+                        val currentDestId = navHostFragment?.navController?.currentDestination?.id
+
+                        when {
+                            currentFragment is CollectionFragment || currentDestId == R.id.collectionFragment ->
+                                (currentFragment as? CollectionFragment)?.filterCollections(newText)
+                            currentFragment is CollectionDetailFragment || currentDestId == R.id.collectionDetailFragment ->
+                                (currentFragment as? CollectionDetailFragment)?.filterCards(newText)
+                            currentFragment is EventsFragment || currentDestId == R.id.eventsFragment ->
+                                (currentFragment as? EventsFragment)?.filterEvents(newText)
+                            currentFragment is UserSearchFragment || currentDestId == R.id.userSearchFragment -> {
+                                val fragment = (currentFragment as? UserSearchFragment)
+                                    ?: navHostFragment?.childFragmentManager?.fragments?.find { it is UserSearchFragment } as? UserSearchFragment
+                                fragment?.searchUsers(newText)
+                            }
+                        }
+                        return true
+                    }
+                })
             }
 
             override fun onPrepareMenu(menu: Menu) {
                 val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                val navController = navHostFragment.navController
                 val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
                 
                 val toggleItem = menu.findItem(R.id.action_toggle_view)
                 val searchItem = menu.findItem(R.id.action_search)
+                val searchView = searchItem?.actionView as? androidx.appcompat.widget.SearchView
+
+                val currentDestId = navController.currentDestination?.id
+
+                when {
+                    currentDestId == R.id.collectionFragment -> {
+                        searchItem?.isVisible = true
+                        searchView?.queryHint = (currentFragment as? CollectionFragment)?.getSearchHint() ?: getString(R.string.buscarColeccionHint)
+                    }
+                    currentDestId == R.id.collectionDetailFragment -> {
+                        searchItem?.isVisible = true
+                        searchView?.queryHint = (currentFragment as? CollectionDetailFragment)?.getSearchHint() ?: getString(R.string.buscarCartaHint)
+                    }
+                    currentDestId == R.id.eventsFragment -> {
+                        searchItem?.isVisible = true
+                        searchView?.queryHint = (currentFragment as? EventsFragment)?.getSearchHint() ?: getString(R.string.buscarEventoHint)
+                    }
+                    currentDestId == R.id.userSearchFragment -> {
+                        searchItem?.isVisible = true
+                        searchItem?.expandActionView()
+                        searchView?.queryHint = (currentFragment as? UserSearchFragment)?.getSearchHint() ?: "Buscar usuario..."
+                    }
+                    else -> {
+                        searchItem?.isVisible = false
+                    }
+                }
 
                 if (currentFragment is ViewTogglable) {
                     toggleItem?.isVisible = true
-                    val isEventListMode = (currentFragment as? es.cifpcarlos3.proyecto_mesus_android.fragments.EventsFragment)?.isListView() == true
-                    searchItem?.isVisible = isEventListMode
+                    val isListView = currentFragment.isListView()
+                    toggleItem?.setIcon(if (isListView) R.drawable.ic_map else R.drawable.ic_view_list)
                 } else {
                     toggleItem?.isVisible = false
-                    searchItem?.isVisible = destinationWithSearch()
                 }
             }
 
@@ -226,19 +283,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-    }
-
-    private fun destinationWithSearch(): Boolean {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val id = navHostFragment.navController.currentDestination?.id
-        return id == R.id.collectionFragment || id == R.id.collectionDetailFragment || id == R.id.userSearchFragment
-    }
-
-    fun getSearchView(): androidx.appcompat.widget.SearchView? {
-        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
-        val menu = toolbar.menu ?: return null
-        val searchItem = menu.findItem(R.id.action_search) ?: return null
-        return searchItem.actionView as? androidx.appcompat.widget.SearchView
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -79,10 +79,10 @@ class EventsFragment : Fragment(), OnMapReadyCallback, ViewTogglable {
                                         MarkerOptions().position(pos).title(evento.nombre)
                                     )
                                 }
-                                if (state.list.isNotEmpty()) {
-                                    val firstEvent = LatLng(state.list[0].latitud, state.list[0].longitud)
-                                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(firstEvent, 10f))
-                                }
+//                                if (state.list.isNotEmpty()) {
+//                                    val firstEvent = LatLng(state.list[0].latitud, state.list[0].longitud)
+//                                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(firstEvent, 10f))
+//                                }
                             }
                             is EventoUiState.Error -> {
                                 binding.progressBar.visibility = View.GONE
@@ -94,7 +94,7 @@ class EventsFragment : Fragment(), OnMapReadyCallback, ViewTogglable {
                 }
             }
         }
-        viewModel.fetchEvents()
+        viewModel.buscarEventos()
     }
 
 
@@ -108,7 +108,7 @@ class EventsFragment : Fragment(), OnMapReadyCallback, ViewTogglable {
         googleMap = map
         googleMap?.uiSettings?.isZoomControlsEnabled = true
         
-        // Ubicación por defecto (España)
+        //Ubicación por defecto (España)
         val defaultLoc = LatLng(40.416775, -3.703790)
         googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLoc, 13f))
         
@@ -124,10 +124,18 @@ class EventsFragment : Fragment(), OnMapReadyCallback, ViewTogglable {
                         .snippet(event.descripcion)
                 )
             }
-            if (currentState.list.isNotEmpty()) {
-                val firstEvent = LatLng(currentState.list[0].latitud, currentState.list[0].longitud)
-                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(firstEvent, 10f))
+//            if (currentState.list.isNotEmpty()) {
+//                val firstEvent = LatLng(currentState.list[0].latitud, currentState.list[0].longitud)
+//                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(firstEvent, 10f))
+//            }
             }
         }
+    fun filterEvents(query: String?) {
+        val tabFragment = childFragmentManager.findFragmentByTag("events_tabs") as? EventsTabFragment
+        tabFragment?.filterEvents(query)
+    }
+
+    fun getSearchHint(): String {
+        return getString(R.string.buscarEventoHint)
     }
 }

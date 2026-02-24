@@ -71,7 +71,7 @@ class LoginFragment: Fragment() {
                             }
                             is UsuarioUiState.ActionSuccess -> {
                                 binding.progressBar.visibility = View.GONE
-                                findNavController().navigate(R.id.eventsFragment)
+                                findNavController().navigate(R.id.collectionFragment)
                             }
                             is UsuarioUiState.Error -> {
                                 binding.progressBar.visibility = View.GONE

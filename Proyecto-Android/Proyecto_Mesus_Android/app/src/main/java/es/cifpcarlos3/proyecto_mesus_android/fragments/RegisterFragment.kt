@@ -67,10 +67,6 @@ class RegisterFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        observeViewModel()
-    }
-
-    private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {

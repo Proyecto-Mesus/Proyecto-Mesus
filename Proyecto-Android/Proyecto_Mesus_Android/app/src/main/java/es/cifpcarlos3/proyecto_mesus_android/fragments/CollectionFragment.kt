@@ -19,14 +19,10 @@ import es.cifpcarlos3.proyecto_mesus_android.databinding.CollectionFragmentBindi
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.CollectionViewModel
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.ColeccionUiState
 
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import androidx.appcompat.widget.SearchView
-import androidx.core.view.MenuProvider
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class CollectionFragment : Fragment() {
@@ -64,7 +60,7 @@ class CollectionFragment : Fragment() {
                 val currentUserId = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE).getInt("userId", -1)
                 
                 if (coleccion.idUsuario == currentUserId) {
-                    val popup = androidx.appcompat.widget.PopupMenu(requireContext(), cardView)
+                    val popup = PopupMenu(requireContext(), cardView)
                     popup.menuInflater.inflate(R.menu.menu_context_item, popup.menu)
                     
                     popup.setOnMenuItemClickListener { item ->
@@ -121,28 +117,14 @@ class CollectionFragment : Fragment() {
             }
         }
 
-        requireActivity().addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            }
+    }
 
-            override fun onPrepareMenu(menu: Menu) {
-                val searchItem = menu.findItem(R.id.action_search)
-                val searchView = searchItem?.actionView as? SearchView
-                
-                searchView?.queryHint = getString(R.string.buscarColeccionHint)
-                searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                    override fun onQueryTextSubmit(query: String?): Boolean = false
-                    override fun onQueryTextChange(newText: String?): Boolean {
-                        adapter.filter.filter(newText)
-                        return true
-                    }
-                })
-            }
+    fun filterCollections(query: String?) {
+        adapter.filter.filter(query)
+    }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return false
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    fun getSearchHint(): String {
+        return getString(R.string.buscarColeccionHint)
     }
 
     override fun onResume() {

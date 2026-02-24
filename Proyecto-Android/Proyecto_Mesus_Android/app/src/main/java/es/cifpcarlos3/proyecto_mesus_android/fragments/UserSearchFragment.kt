@@ -1,8 +1,6 @@
 package es.cifpcarlos3.proyecto_mesus_android.fragments
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import es.cifpcarlos3.proyecto_mesus_android.databinding.SearchUsersFragmentBinding
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.UserSearchViewModel
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.UsuarioUiState
@@ -62,19 +61,20 @@ class UserSearchFragment : Fragment() {
                         }
                         is UsuarioUiState.Error -> {
                             binding.progressBar.visibility = View.GONE
+                            Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
                         }
                         else -> {}
                     }
                 }
             }
         }
+    }
 
-        binding.etSearchUser.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.searchUsers(s.toString())
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        })
+    fun searchUsers(query: String?) {
+        viewModel.searchUsers(query ?: "")
+    }
+
+    fun getSearchHint(): String {
+        return getString(R.string.hintBuscarUsuario)
     }
 }

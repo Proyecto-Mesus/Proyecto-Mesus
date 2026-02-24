@@ -102,9 +102,9 @@ class EventsListFragment : Fragment() {
                             binding.progressBar.visibility = View.GONE
                             if (showOnlyMine) {
                                 val userId = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE).getInt("userId", -1)
-                                viewModel.fetchMyEvents(userId)
+                                viewModel.buscarMisEventos(userId)
                             } else {
-                                viewModel.fetchEvents()
+                                viewModel.buscarEventos()
                             }
                         }
                         else -> {
@@ -115,33 +115,21 @@ class EventsListFragment : Fragment() {
             }
         }
 
-        requireActivity().addMenuProvider(object : androidx.core.view.MenuProvider {
-            override fun onCreateMenu(menu: android.view.Menu, menuInflater: android.view.MenuInflater) {}
-
-            override fun onPrepareMenu(menu: android.view.Menu) {
-                val searchItem = menu.findItem(R.id.action_search)
-                val searchView = searchItem?.actionView as? androidx.appcompat.widget.SearchView
-                
-                searchView?.queryHint = getString(R.string.buscarEventoHint)
-                searchView?.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
-                    override fun onQueryTextSubmit(query: String?): Boolean = false
-                    override fun onQueryTextChange(newText: String?): Boolean {
-                        adapter.filter.filter(newText)
-                        return true
-                    }
-                })
-            }
-
-            override fun onMenuItemSelected(menuItem: android.view.MenuItem): Boolean = false
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
-
         if (showOnlyMine) {
             val sharedPrefs = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE)
             val userId = sharedPrefs.getInt("userId", -1)
-            viewModel.fetchMyEvents(userId)
+            viewModel.buscarMisEventos(userId)
         } else {
-            viewModel.fetchEvents()
+            viewModel.buscarEventos()
         }
+    }
+
+    fun filterEvents(query: String?) {
+        adapter.filter.filter(query)
+    }
+
+    fun getSearchHint(): String {
+        return getString(R.string.buscarEventoHint)
     }
 
     companion object {

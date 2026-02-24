@@ -25,8 +25,13 @@ class AddEventViewModel : ViewModel() {
         viewModelScope.launch {
             val evento = Evento(0, nombre, descripcion, fecha, lat, lng)
             val result = provider.createEvento(evento, idUsuario)
-            result.onSuccess {
-                _uiState.value = EventoUiState.ActionSuccess
+            result.onSuccess { eventId ->
+                val joinResult = provider.joinEvento(eventId, idUsuario)
+                joinResult.onSuccess {
+                    _uiState.value = EventoUiState.ActionSuccess
+                }.onFailure {
+                    _uiState.value = EventoUiState.Error("Evento guardado, pero falló la inscripción automática: ${it.message}")
+                }
             }.onFailure {
                 _uiState.value = EventoUiState.Error(it.message ?: "Error al guardar el evento")
             }

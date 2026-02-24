@@ -35,6 +35,15 @@ class EventsTabFragment : Fragment() {
             }
         }.attach()
     }
+
+    fun filterEvents(query: String?) {
+        val currentFragment = childFragmentManager.findFragmentByTag("f" + binding.viewPager.currentItem) as? EventsListFragment
+        currentFragment?.filterEvents(query)
+    }
+
+    fun getSearchHint(): String {
+        return getString(R.string.buscarEventoHint)
+    }
 }
 
 class EventsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {

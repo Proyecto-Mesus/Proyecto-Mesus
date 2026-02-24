@@ -17,12 +17,7 @@ import es.cifpcarlos3.proyecto_mesus_android.databinding.CollectionDetailFragmen
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.CollectionDetailViewModel
 import es.cifpcarlos3.proyecto_mesus_android.viewmodels.CartaUiState
 
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import androidx.appcompat.widget.PopupMenu
-import androidx.appcompat.widget.SearchView
-import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -149,33 +144,25 @@ class CollectionDetailFragment : Fragment(), ViewTogglable {
     }
 
 
-        requireActivity().addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            }
-            override fun onPrepareMenu(menu: Menu) {
-                val searchItem = menu.findItem(R.id.action_search)
-                val searchView = searchItem?.actionView as? SearchView
-                
-                searchView?.queryHint = getString(R.string.buscarCartaHint)
-                searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                    override fun onQueryTextSubmit(query: String?): Boolean = false
-                    override fun onQueryTextChange(newText: String?): Boolean {
-                        adapter.filter.filter(newText)
-                        return true
-                    }
-                })
-            }
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return false
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
 
-        
-        viewModel.getCartas(collectionId)
+    fun filterCards(query: String?) {
+        adapter.filter.filter(query)
+    }
+
+    fun getSearchHint(): String {
+        return getString(R.string.buscarCartaHint)
     }
 
     override fun toggleView() {
         viewModel.toggleViewMode()
         requireActivity().invalidateOptionsMenu()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (collectionId != -1) {
+            viewModel.getCartas(collectionId)
+        }
     }
 }

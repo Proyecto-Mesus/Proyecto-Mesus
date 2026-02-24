@@ -10,22 +10,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_search_user"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/hintBuscarUsuario">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_search_user"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/seach1_style"
-                android:inputType="textPersonName"
-                android:textColor="@color/textoclaro" />
-
-        </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_users"

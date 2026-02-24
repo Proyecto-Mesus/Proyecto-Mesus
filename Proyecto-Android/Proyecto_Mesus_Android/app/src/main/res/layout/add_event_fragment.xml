@@ -56,7 +56,8 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/seach1_style"
                     android:inputType="date"
-                    android:textColor="@color/textoclaro" />
+                    android:textColor="@color/textoclaro"
+                    android:focusable="false"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView

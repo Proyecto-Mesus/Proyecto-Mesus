@@ -30,7 +30,7 @@ class EventsViewModel : ViewModel() {
         _isListMode.value = !_isListMode.value
     }
 
-    fun fetchEvents() {
+    fun buscarEventos() {
         viewModelScope.launch {
             _uiState.value = EventoUiState.Loading
             val result = provider.getEventos()
@@ -42,7 +42,7 @@ class EventsViewModel : ViewModel() {
         }
     }
 
-    fun fetchMyEvents(userId: Int) {
+    fun buscarMisEventos(userId: Int) {
         viewModelScope.launch {
             _uiState.value = EventoUiState.Loading
             val result = provider.getEventosInscritos(userId)
@@ -60,7 +60,7 @@ class EventsViewModel : ViewModel() {
             val result = provider.deleteEvento(id)
             result.onSuccess {
                 _uiState.value = EventoUiState.ActionSuccess
-                fetchEvents()
+                buscarEventos()
             }.onFailure {
                 _uiState.value = EventoUiState.Error(it.message ?: "Error al borrar")
             }

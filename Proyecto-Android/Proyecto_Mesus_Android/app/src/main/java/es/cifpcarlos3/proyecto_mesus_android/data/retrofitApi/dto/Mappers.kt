@@ -3,9 +3,11 @@ package es.cifpcarlos3.proyecto_mesus_android.data.retrofitApi.dto
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Carta
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Conversacion
+import es.cifpcarlos3.proyecto_mesus_android.data.models.Evento
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Juego
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Mensaje
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Usuario
+import java.util.Locale
 
 fun UsuarioDto.toDomain(): Usuario {
     return Usuario(
@@ -14,8 +16,8 @@ fun UsuarioDto.toDomain(): Usuario {
     )
 }
 
-fun EventoDto.toDomain(): es.cifpcarlos3.proyecto_mesus_android.data.models.Evento {
-    return es.cifpcarlos3.proyecto_mesus_android.data.models.Evento(
+fun EventoDto.toDomain(): Evento {
+    return Evento(
         idEvento = id,
         nombre = nombre,
         descripcion = descripcion,
@@ -67,7 +69,7 @@ fun ChatEventoDto.toDomain(): Conversacion {
 fun MensajeChatEventoDto.toDomain(): Mensaje {
     // Formato de fecha de Spring: 2026-02-20T14:35:01
     val millis = try {
-        val format = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault())
+        val format = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         format.parse(fechaEnvio)?.time ?: System.currentTimeMillis()
     } catch (e: Exception) {
         System.currentTimeMillis()

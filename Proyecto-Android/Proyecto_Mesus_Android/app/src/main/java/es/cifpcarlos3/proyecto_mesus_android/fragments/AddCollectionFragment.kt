@@ -21,6 +21,7 @@ import es.cifpcarlos3.proyecto_mesus_android.viewmodels.JuegoUiState
 import android.widget.ArrayAdapter
 import es.cifpcarlos3.proyecto_mesus_android.data.models.Juego
 import kotlinx.coroutines.launch
+import es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
 
 class AddCollectionFragment : Fragment() {
     private lateinit var binding: AddCollectionFragmentBinding
@@ -41,10 +42,10 @@ class AddCollectionFragment : Fragment() {
         viewModel.obtenerJuegos()
 
         val collectionToEdit = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getSerializable("coleccion", es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion::class.java)
+            arguments?.getSerializable("coleccion", Coleccion::class.java)
         } else {
             @Suppress("DEPRECATION")
-            arguments?.getSerializable("coleccion") as? es.cifpcarlos3.proyecto_mesus_android.data.models.Coleccion
+            arguments?.getSerializable("coleccion") as? Coleccion
         }
         
         if (collectionToEdit != null) {

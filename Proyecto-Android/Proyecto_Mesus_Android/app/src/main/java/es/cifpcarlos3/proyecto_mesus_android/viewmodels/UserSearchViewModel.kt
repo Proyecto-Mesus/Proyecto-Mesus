@@ -29,9 +29,13 @@ class UserSearchViewModel(application: Application) : AndroidViewModel(applicati
                 repository.searchUsuarios(query)
             }
             result.onSuccess { users ->
-                _uiState.value = UsuarioUiState.SuccessList(users)
+                if (users.isEmpty()) {
+                     _uiState.value = UsuarioUiState.Error("No se encontraron usuarios")
+                } else {
+                    _uiState.value = UsuarioUiState.SuccessList(users)
+                }
             }.onFailure { exception ->
-                _uiState.value = UsuarioUiState.Error(exception.message ?: "Error al buscar usuarios")
+                _uiState.value = UsuarioUiState.Error("Error de Red: ${exception.message}")
             }
         }
     }
