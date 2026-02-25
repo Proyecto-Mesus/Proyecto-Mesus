@@ -28,8 +28,8 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
     private val _uiState = MutableStateFlow<UsuarioUiState>(UsuarioUiState.Idle)
     val uiState: StateFlow<UsuarioUiState> = _uiState
 
-    private val _isButtonEnabled = MutableStateFlow<Boolean>(false)
-    val isButtonEnabled: StateFlow<Boolean> get()= _isButtonEnabled
+    private val _isButtonEnabled = MutableStateFlow(false)
+    val isButtonEnabled: StateFlow<Boolean> = _isButtonEnabled
 
     private val repository = UsuarioProvider(RetrofitInstance.api)
     private val sharedPrefs = application.getSharedPreferences("user_session", Context.MODE_PRIVATE)

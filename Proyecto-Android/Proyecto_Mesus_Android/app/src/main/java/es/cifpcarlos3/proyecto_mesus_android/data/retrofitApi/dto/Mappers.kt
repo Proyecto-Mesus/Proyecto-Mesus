@@ -24,7 +24,7 @@ fun EventoDto.toDomain(): Evento {
         fecha = fecha,
         latitud = latitud,
         longitud = longitud,
-        idCreador = creador?.id
+        idCreador = creador?.id ?: 0
     )
 }
 
@@ -39,7 +39,7 @@ fun ColeccionDto.toDomain(): Coleccion {
     return Coleccion(
         idColeccion = id,
         nombre = nombre,
-        idUsuario = usuario.id,
+        idUsuario = usuario.id ?: 0,
         idJuego = juego.id,
         publica = if (publica) 1 else 0
     )

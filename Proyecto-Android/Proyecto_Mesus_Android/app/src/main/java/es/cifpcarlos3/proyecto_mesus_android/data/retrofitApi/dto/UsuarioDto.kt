@@ -6,5 +6,7 @@ data class UsuarioDto(
     @SerializedName(value = "id", alternate = ["id_usuario"])
     val id: Int,
     @SerializedName(value = "nombreUsuario", alternate = ["nombre_usuario"])
-    val nombreUsuario: String
+    val nombreUsuario: String,
+    val email: String? = null,
+    val password: String? = null
 )

@@ -1,6 +1,7 @@
 package es.cifpcarlos3.proyecto_mesus_android.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -16,7 +17,7 @@ import es.cifpcarlos3.proyecto_mesus_android.databinding.ItemCardGridBinding
 
 class CardAdapter(
     private var fullList: List<Carta>,
-    private val onLongClick: ((Carta, android.view.View) -> Unit)? = null
+    private val onLongClick: ((Carta, View) -> Unit)? = null
 ) : RecyclerView.Adapter<CardAdapter.CardViewHolder>(), Filterable {
 
     private var filteredList: List<Carta> = fullList.toList()

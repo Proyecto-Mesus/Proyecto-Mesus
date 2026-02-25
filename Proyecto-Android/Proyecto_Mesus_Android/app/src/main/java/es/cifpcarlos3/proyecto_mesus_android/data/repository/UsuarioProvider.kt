@@ -20,7 +20,9 @@ class UsuarioProvider(private val api: MesusApi) {
         return try {
             val userDto = UsuarioDto(
                 id = 0,
-                nombreUsuario = username
+                nombreUsuario = username,
+                email = email,
+                password = password
             )
             val response = api.registerUsuario(userDto)
             Result.success(response.toDomain())

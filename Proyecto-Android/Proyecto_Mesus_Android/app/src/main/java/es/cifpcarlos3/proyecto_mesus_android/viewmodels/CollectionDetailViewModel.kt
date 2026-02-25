@@ -29,7 +29,6 @@ class CollectionDetailViewModel : ViewModel() {
     fun toggleViewMode() {
         _isGridView.value = !_isGridView.value
     }
-
     fun getCartas(idColeccion: Int) {
         _uiState.value = CartaUiState.Loading
         viewModelScope.launch {

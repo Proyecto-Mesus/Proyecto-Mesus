@@ -56,7 +56,6 @@ class CollectionDetailFragment : Fragment(), ViewTogglable {
             arguments?.getSerializable("coleccion") as? Coleccion
         }
 
-
         adapter = CardAdapter(emptyList()) { card, cardView ->
             val userId = requireContext().getSharedPreferences("user_session", Context.MODE_PRIVATE).getInt("userId", -1)
             

@@ -56,7 +56,95 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setupWithNavController(navController)
         navigationView.setupWithNavController(navController)
 
-        setupMenu()
+        addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_toolbar, menu)
+                val searchItem = menu.findItem(R.id.action_search)
+                val searchView = searchItem?.actionView as? androidx.appcompat.widget.SearchView
+
+                searchView?.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean = false
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+                        val currentFragment = navHostFragment?.childFragmentManager?.primaryNavigationFragment
+                        val currentDestId = navHostFragment?.navController?.currentDestination?.id
+
+                        when {
+                            currentFragment is CollectionFragment || currentDestId == R.id.collectionFragment ->
+                                (currentFragment as? CollectionFragment)?.filterCollections(newText)
+                            currentFragment is CollectionDetailFragment || currentDestId == R.id.collectionDetailFragment ->
+                                (currentFragment as? CollectionDetailFragment)?.filterCards(newText)
+                            currentFragment is EventsFragment || currentDestId == R.id.eventsFragment ->
+                                (currentFragment as? EventsFragment)?.filterEvents(newText)
+                            currentFragment is UserSearchFragment || currentDestId == R.id.userSearchFragment -> {
+                                val fragment = (currentFragment as? UserSearchFragment)
+                                    ?: navHostFragment?.childFragmentManager?.fragments?.find { it is UserSearchFragment } as? UserSearchFragment
+                                fragment?.searchUsers(newText)
+                            }
+                        }
+                        return true
+                    }
+                })
+            }
+
+            override fun onPrepareMenu(menu: Menu) {
+                val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                val navController = navHostFragment.navController
+                val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+
+                val toggleItem = menu.findItem(R.id.action_toggle_view)
+                val searchItem = menu.findItem(R.id.action_search)
+                val searchView = searchItem?.actionView as? androidx.appcompat.widget.SearchView
+
+                val currentDestId = navController.currentDestination?.id
+
+                when {
+                    currentDestId == R.id.collectionFragment -> {
+                        searchItem?.isVisible = true
+                        searchView?.queryHint = (currentFragment as? CollectionFragment)?.getSearchHint() ?: getString(R.string.buscarColeccionHint)
+                    }
+                    currentDestId == R.id.collectionDetailFragment -> {
+                        searchItem?.isVisible = true
+                        searchView?.queryHint = (currentFragment as? CollectionDetailFragment)?.getSearchHint() ?: getString(R.string.buscarCartaHint)
+                    }
+                    currentDestId == R.id.eventsFragment -> {
+                        searchItem?.isVisible = true
+                        searchView?.queryHint = (currentFragment as? EventsFragment)?.getSearchHint() ?: getString(R.string.buscarEventoHint)
+                    }
+                    currentDestId == R.id.userSearchFragment -> {
+                        searchItem?.isVisible = true
+                        searchItem?.expandActionView()
+                        searchView?.queryHint = (currentFragment as? UserSearchFragment)?.getSearchHint() ?: "Buscar usuario..."
+                    }
+                    else -> {
+                        searchItem?.isVisible = false
+                    }
+                }
+
+                if (currentFragment is ViewTogglable) {
+                    toggleItem?.isVisible = true
+                    val isListView = currentFragment.isListView()
+                    toggleItem?.setIcon(if (isListView) R.drawable.ic_map else R.drawable.ic_view_list)
+                } else {
+                    toggleItem?.isVisible = false
+                }
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_toggle_view -> {
+                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                        val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+                        if (currentFragment is ViewTogglable) {
+                            currentFragment.toggleView()
+                            invalidateOptionsMenu()
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            }
+        })
 
         val sharedPrefs = getSharedPreferences("user_session", MODE_PRIVATE)
         val isLoggedIn = sharedPrefs.getBoolean("isLoggedIn", false)
@@ -193,97 +281,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupMenu() {
-        addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_toolbar, menu)
-                val searchItem = menu.findItem(R.id.action_search)
-                val searchView = searchItem?.actionView as? androidx.appcompat.widget.SearchView
-
-                searchView?.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
-                    override fun onQueryTextSubmit(query: String?): Boolean = false
-                    override fun onQueryTextChange(newText: String?): Boolean {
-                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
-                        val currentFragment = navHostFragment?.childFragmentManager?.primaryNavigationFragment
-                        val currentDestId = navHostFragment?.navController?.currentDestination?.id
-
-                        when {
-                            currentFragment is CollectionFragment || currentDestId == R.id.collectionFragment ->
-                                (currentFragment as? CollectionFragment)?.filterCollections(newText)
-                            currentFragment is CollectionDetailFragment || currentDestId == R.id.collectionDetailFragment ->
-                                (currentFragment as? CollectionDetailFragment)?.filterCards(newText)
-                            currentFragment is EventsFragment || currentDestId == R.id.eventsFragment ->
-                                (currentFragment as? EventsFragment)?.filterEvents(newText)
-                            currentFragment is UserSearchFragment || currentDestId == R.id.userSearchFragment -> {
-                                val fragment = (currentFragment as? UserSearchFragment)
-                                    ?: navHostFragment?.childFragmentManager?.fragments?.find { it is UserSearchFragment } as? UserSearchFragment
-                                fragment?.searchUsers(newText)
-                            }
-                        }
-                        return true
-                    }
-                })
-            }
-
-            override fun onPrepareMenu(menu: Menu) {
-                val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-                val navController = navHostFragment.navController
-                val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
-                
-                val toggleItem = menu.findItem(R.id.action_toggle_view)
-                val searchItem = menu.findItem(R.id.action_search)
-                val searchView = searchItem?.actionView as? androidx.appcompat.widget.SearchView
-
-                val currentDestId = navController.currentDestination?.id
-
-                when {
-                    currentDestId == R.id.collectionFragment -> {
-                        searchItem?.isVisible = true
-                        searchView?.queryHint = (currentFragment as? CollectionFragment)?.getSearchHint() ?: getString(R.string.buscarColeccionHint)
-                    }
-                    currentDestId == R.id.collectionDetailFragment -> {
-                        searchItem?.isVisible = true
-                        searchView?.queryHint = (currentFragment as? CollectionDetailFragment)?.getSearchHint() ?: getString(R.string.buscarCartaHint)
-                    }
-                    currentDestId == R.id.eventsFragment -> {
-                        searchItem?.isVisible = true
-                        searchView?.queryHint = (currentFragment as? EventsFragment)?.getSearchHint() ?: getString(R.string.buscarEventoHint)
-                    }
-                    currentDestId == R.id.userSearchFragment -> {
-                        searchItem?.isVisible = true
-                        searchItem?.expandActionView()
-                        searchView?.queryHint = (currentFragment as? UserSearchFragment)?.getSearchHint() ?: "Buscar usuario..."
-                    }
-                    else -> {
-                        searchItem?.isVisible = false
-                    }
-                }
-
-                if (currentFragment is ViewTogglable) {
-                    toggleItem?.isVisible = true
-                    val isListView = currentFragment.isListView()
-                    toggleItem?.setIcon(if (isListView) R.drawable.ic_map else R.drawable.ic_view_list)
-                } else {
-                    toggleItem?.isVisible = false
-                }
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.action_toggle_view -> {
-                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-                        val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
-                        if (currentFragment is ViewTogglable) {
-                            currentFragment.toggleView()
-                            invalidateOptionsMenu()
-                        }
-                        true
-                    }
-                    else -> false
-                }
-            }
-        })
-    }
 
     override fun onSupportNavigateUp(): Boolean {
         val navHostFragment = supportFragmentManager

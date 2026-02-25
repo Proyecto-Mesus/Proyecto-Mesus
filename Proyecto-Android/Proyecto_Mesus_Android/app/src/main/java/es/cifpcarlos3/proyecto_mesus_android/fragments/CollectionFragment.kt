@@ -116,7 +116,6 @@ class CollectionFragment : Fragment() {
                 }
             }
         }
-
     }
 
     fun filterCollections(query: String?) {

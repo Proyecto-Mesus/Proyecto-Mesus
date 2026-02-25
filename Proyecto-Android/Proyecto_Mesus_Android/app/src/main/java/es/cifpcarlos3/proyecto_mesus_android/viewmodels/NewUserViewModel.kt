@@ -57,10 +57,11 @@ class NewUserViewModel : ViewModel() {
             val result = repository.registerUsuario(inputTextUser, inputTextEmail, inputTextPasswd)
             result.onSuccess {
                 _uiState.value = UsuarioUiState.ActionSuccess
-            }.onFailure {
+            }.onFailure { exception ->
                 val errorMsg = when {
-                    it.message?.contains("409") == true -> "USER_EXISTS"
-                    else -> "GENERAL_ERROR"
+                    exception.message?.contains("409") == true -> "USER_EXISTS"
+                    exception.message?.contains("400") == true -> "Datos inválidos (revisa el email o campos vacíos)"
+                    else -> exception.message ?: "Error desconocido"
                 }
                 _uiState.value = UsuarioUiState.Error(errorMsg)
             }
